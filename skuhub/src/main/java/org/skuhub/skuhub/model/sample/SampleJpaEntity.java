@@ -16,7 +16,7 @@ public class SampleJpaEntity extends BaseTime {
     @Column(name = "user_key")
     private int userKey;  // 'user_key' 컬럼에 맞춰 AUTO_INCREMENT
 
-    @Column(name = "user_id", nullable = false, length = 20, unique = true)
+    @Column(name = "user_id", nullable = false, length = 20)
     private String userId;  // 'user_id' 컬럼에 맞춤
 
     @Column(name = "email", nullable = false, length = 100)
@@ -37,6 +37,4 @@ public class SampleJpaEntity extends BaseTime {
     @Column(name = "created_at", nullable = false)
     private java.time.OffsetDateTime createdAt;  // 'created_at' 컬럼에 맞춤
 
-    @Column(name = "withdrawal_date", nullable = false)
-    private java.time.OffsetDateTime withdrawalDate;  // 'withdrawal_date' 컬럼에 맞춤
 }

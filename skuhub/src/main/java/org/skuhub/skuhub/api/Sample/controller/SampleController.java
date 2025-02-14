@@ -17,13 +17,13 @@ import java.util.List;  // List를 임포트
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/sample")
-@Slf4j  // Slf4j 로깅을 사용합니다.
+@Slf4j
 public class SampleController {
     private final SampleRepository sampleRepository;
 
     @PostMapping("")
     public BaseResponse postSample(@RequestBody SamplePostRequest request) {
-        log.info("Received post request with userId: {}", request.getUserId());  // 로그 추가
+        log.info("Received post request with userId: {}", request.getUserId());
 
         SampleJpaEntity entity = new SampleJpaEntity();
         entity.setUserId(request.getUserId());
@@ -32,10 +32,6 @@ public class SampleController {
         entity.setYear(request.getYear());
         entity.setDepartment(request.getDepartment());
         entity.setName(request.getName());
-
-        // 현재 시간을 OffsetDateTime으로 설정
-        entity.setCreatedAt(OffsetDateTime.now());
-        entity.setWithdrawalDate(OffsetDateTime.now());  // 현재 시간을 withdrawalDate로 설정
 
         SampleJpaEntity saved = sampleRepository.save(entity);
 
@@ -46,11 +42,10 @@ public class SampleController {
                 saved.getYear(),
                 saved.getDepartment(),
                 saved.getName(),
-                saved.getCreatedAt(),
-                saved.getWithdrawalDate()
-        );
+                saved.getCreatedAt()
+        );  // 여기서 괄호 확인
 
-        log.info("Sample saved with userKey: {}", saved.getUserKey());  // 로그 추가
+        log.info("Sample saved with userKey: {}", saved.getUserKey());
 
         return new BaseResponse<>(true, "200", "샘플 저장 성공", OffsetDateTime.now(), response);
     }
@@ -60,7 +55,7 @@ public class SampleController {
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "page", defaultValue = "1") int page
     ) {
-        log.info("Received get request for page {} with size {}", page, size);  // 로그 추가
+        log.info("Received get request for page {} with size {}", page, size);
 
         Pageable pageable = PageRequest.of(page - 1, size);
         List<SampleJpaEntity> entityList = sampleRepository.findAll(pageable).getContent();
@@ -73,12 +68,11 @@ public class SampleController {
                         entity.getYear(),
                         entity.getDepartment(),
                         entity.getName(),
-                        entity.getCreatedAt(),
-                        entity.getWithdrawalDate()
-                ))
+                        entity.getCreatedAt()
+                ))  // 여기서 괄호 확인
                 .toList();
 
-        log.info("Returning {} samples", responseList.size());  // 로그 추가
+        log.info("Returning {} samples", responseList.size());
 
         return new BaseResponse<>(true, "200", "샘플 호출 성공", OffsetDateTime.now(), responseList);
     }

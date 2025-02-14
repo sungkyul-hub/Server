@@ -17,6 +17,5 @@ public class SampleResponse {
     private String department;
     private String name;
     private OffsetDateTime createdAt;
-    private OffsetDateTime withdrawalDate;
 }
 
