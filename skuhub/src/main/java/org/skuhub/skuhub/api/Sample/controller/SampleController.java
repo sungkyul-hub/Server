@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.time.OffsetDateTime;
-import java.util.List;
+import java.util.List;  // List를 임포트
 
 @RestController
 @RequiredArgsConstructor
@@ -23,17 +23,34 @@ public class SampleController {
 
     @PostMapping("")
     public BaseResponse postSample(@RequestBody SamplePostRequest request) {
-        log.info("Received post request with text: {}", request.getText());  // 로그 추가
+        log.info("Received post request with userId: {}", request.getUserId());  // 로그 추가
 
         SampleJpaEntity entity = new SampleJpaEntity();
-        entity.setText(request.getText());
-        entity.setYn(true);
+        entity.setUserId(request.getUserId());
+        entity.setEmail(request.getEmail());
+        entity.setPassword(request.getPassword());
+        entity.setYear(request.getYear());
+        entity.setDepartment(request.getDepartment());
+        entity.setName(request.getName());
+
+        // 현재 시간을 OffsetDateTime으로 설정
+        entity.setCreatedAt(OffsetDateTime.now());
+        entity.setWithdrawalDate(OffsetDateTime.now());  // 현재 시간을 withdrawalDate로 설정
 
         SampleJpaEntity saved = sampleRepository.save(entity);
 
-        SampleResponse response = new SampleResponse(saved.getId(), saved.getText(), saved.isYn(), OffsetDateTime.now());
+        SampleResponse response = new SampleResponse(
+                saved.getUserKey(),
+                saved.getUserId(),
+                saved.getEmail(),
+                saved.getYear(),
+                saved.getDepartment(),
+                saved.getName(),
+                saved.getCreatedAt(),
+                saved.getWithdrawalDate()
+        );
 
-        log.info("Sample saved with ID: {}", saved.getId());  // 로그 추가
+        log.info("Sample saved with userKey: {}", saved.getUserKey());  // 로그 추가
 
         return new BaseResponse<>(true, "200", "샘플 저장 성공", OffsetDateTime.now(), response);
     }
@@ -49,7 +66,16 @@ public class SampleController {
         List<SampleJpaEntity> entityList = sampleRepository.findAll(pageable).getContent();
 
         List<SampleResponse> responseList = entityList.stream()
-                .map(entity -> new SampleResponse(entity.getId(), entity.getText(), entity.isYn(), OffsetDateTime.now()))
+                .map(entity -> new SampleResponse(
+                        entity.getUserKey(),
+                        entity.getUserId(),
+                        entity.getEmail(),
+                        entity.getYear(),
+                        entity.getDepartment(),
+                        entity.getName(),
+                        entity.getCreatedAt(),
+                        entity.getWithdrawalDate()
+                ))
                 .toList();
 
         log.info("Returning {} samples", responseList.size());  // 로그 추가

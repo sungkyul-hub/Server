@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public class SampleDslRepositoryImpl implements SampleDslRepository {
 
-    @PersistenceContext // EntityManager 주입
+    @PersistenceContext
     private final EntityManager entityManager;
 
     public SampleDslRepositoryImpl(EntityManager entityManager) {
@@ -23,11 +23,18 @@ public class SampleDslRepositoryImpl implements SampleDslRepository {
 
     @Override
     public Page<SampleJpaEntity> findSampleWithCustomLogic(String keyword, Pageable pageable) {
-        String jpql = "SELECT s FROM SampleJpaEntity s WHERE s.text LIKE :keyword";
+        // 'name'을 사용하여 검색
+        String jpql = "SELECT s FROM SampleJpaEntity s WHERE s.name LIKE :keyword";
         TypedQuery<SampleJpaEntity> query = entityManager.createQuery(jpql, SampleJpaEntity.class);
         query.setParameter("keyword", "%" + keyword + "%");
 
-        int totalRows = query.getResultList().size();
+        // 전체 데이터의 개수를 계산하는 쿼리
+        String countJpql = "SELECT COUNT(s) FROM SampleJpaEntity s WHERE s.name LIKE :keyword";
+        TypedQuery<Long> countQuery = entityManager.createQuery(countJpql, Long.class);
+        countQuery.setParameter("keyword", "%" + keyword + "%");
+        long totalRows = countQuery.getSingleResult();
+
+        // 페이징 처리
         query.setFirstResult((int) pageable.getOffset());
         query.setMaxResults(pageable.getPageSize());
 
