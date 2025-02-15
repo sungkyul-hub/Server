@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class TaxiPostDetailsResponse {
-    private int id;
+    private int post_id;
     private String title;
     private String description;
     private OffsetDateTime ride_time;

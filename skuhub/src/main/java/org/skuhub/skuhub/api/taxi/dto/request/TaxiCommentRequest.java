@@ -7,7 +7,8 @@ import lombok.Setter;
 @Setter
 public class TaxiCommentRequest {
 
-    private int postId;
+    private int post_id;
+    private int comment_id;
     private String name;
     private String comment_content;
 }

@@ -11,7 +11,7 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class TaxiPostResponse {
 
-    private int id;
+    private int post_id;
     private String title;
     private String description;
     private OffsetDateTime ride_time;
