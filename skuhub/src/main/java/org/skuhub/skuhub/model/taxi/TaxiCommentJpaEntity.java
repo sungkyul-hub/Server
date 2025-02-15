@@ -36,6 +36,6 @@ public class TaxiCommentJpaEntity {
 
     @NotNull
     @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    private java.time.OffsetDateTime createdAt;
 
 }
