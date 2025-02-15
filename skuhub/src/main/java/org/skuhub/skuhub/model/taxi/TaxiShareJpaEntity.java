@@ -67,4 +67,7 @@ public class TaxiShareJpaEntity {
     @OneToMany(mappedBy = "post")
     private Set<TaxiCommentJpaEntity> commentTbs = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "post")
+    private Set<TaxiJoinJpaEntity> taxiJoinTbs = new LinkedHashSet<>();
+
 }
