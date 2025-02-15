@@ -36,9 +36,17 @@ public class BaseResponse<T> {
         this.responseAt = OffsetDateTime.now();
     }
 
-    // 생성자에서 데이터만 받아서 BaseResponse를 생성하는 방식
+    // 데이터만 받아서 BaseResponse를 생성하는 방식
     public BaseResponse(T data) {
         this();
         this.data = data;
+    }
+
+    // statusCode와 message를 받아서 응답을 생성하는 생성자 추가
+    public BaseResponse(int statusCode, String message) {
+        this();
+        this.isSuccess = statusCode == 200;  // 응답 코드가 200이면 성공으로 처리
+        this.code = String.valueOf(statusCode);
+        this.message = message;
     }
 }
