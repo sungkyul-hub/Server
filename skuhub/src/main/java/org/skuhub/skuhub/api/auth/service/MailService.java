@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import org.springframework.mail.MailSendException;
+
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +20,9 @@ public class MailService {
 
     @Value("${spring.mail.username}")
     private String senderEmail;
+
+    // 인증번호를 저장하는 맵 추가
+    private final Map<String, String> verificationCodes = new ConcurrentHashMap<>();
 
     // 랜덤으로 숫자 생성
     public String createNumber() {
@@ -41,7 +46,7 @@ public class MailService {
 
         message.setFrom(senderEmail);
         message.setRecipients(MimeMessage.RecipientType.TO, mail);
-        message.setSubject("[SKUHub] 이메일 인증");
+        message.setSubject("[SKUHUB] 이메일 인증");
         String body = "<h3>요청하신 인증 번호입니다.</h3>";
         body += "<h1>" + number + "</h1>";
         body += "<h3>감사합니다.</h3>";
@@ -57,12 +62,19 @@ public class MailService {
         MimeMessage message = createMail(sendEmail, number); // 메일 생성
         try {
             javaMailSender.send(message); // 메일 발송
+            verificationCodes.put(sendEmail, number); // 이메일과 인증번호 저장
         } catch (MailException e) {
             e.printStackTrace();
             throw new MailSendException("메일 발송 중 오류가 발생했습니다."); // 커스텀 예외 추가
         }
 
         return number; // 생성된 인증번호 반환
+    }
+
+    // 인증번호 검증
+    public boolean verifyCode(String email, String code) {
+        String storedCode = verificationCodes.get(email); // 저장된 인증번호 가져오기
+        return storedCode != null && storedCode.equals(code); // 입력된 코드와 비교
     }
 
     // 커스텀 예외 정의 (선택 사항)

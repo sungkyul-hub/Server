@@ -33,15 +33,28 @@ public class AuthController {
     @PostMapping("/send-email-verification")
     public BaseResponse<String> sendVerificationCode(@RequestParam String email) {
         if (!email.endsWith("@sungkyul.ac.kr")) {
-            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "유효하지 않은 이메일 도메인입니다.");
+            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "유효하지 않은 이메일 도메인입니다.", "유효하지 않은 이메일 도메인입니다.");
         }
 
         try {
             String authCode = mailService.sendSimpleMessage(email);
-            return new BaseResponse<>(authCode);
+            return new BaseResponse<>(HttpStatus.OK.value(), "메일 발송 성공", authCode);
         } catch (MessagingException e) {
             log.error("메일 발송 오류: {}", e.getMessage(), e);
-            return new BaseResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "메일 발송 실패");
+            return new BaseResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "메일 발송 실패", "메일 발송 실패");
+        }
+    }
+
+    @Operation(summary = "이메일 인증번호 확인", description = "사용자가 입력한 인증번호를 검증하는 API")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/verfy-email")
+    public BaseResponse<String> verifyEmailCode(@RequestParam String email, @RequestParam String code) {
+        if (mailService.verifyCode(email, code)) {
+            // 인증 성공 시
+            return new BaseResponse<String>(HttpStatus.OK.value(),"인증에 성공하였습니다.", "인증에 성공하였습니다.");
+        } else {
+            // 인증 실패 시
+            return new BaseResponse<String>(HttpStatus.BAD_REQUEST.value(), "인증에 실패하였습니다.", "인증에 실패하였습니다.");
         }
     }
 
@@ -71,7 +84,6 @@ public class AuthController {
 
         return response;
     }
-
 
     @Operation(summary = "회원 가입(일반)", description = "일반 회원 가입 API")
     @ResponseStatus(HttpStatus.CREATED)

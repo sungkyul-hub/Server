@@ -31,21 +31,20 @@ public class BaseResponse<T> {
     @Schema(description = "응답 데이터")
     private T data;
 
-
     public BaseResponse() {
         this.responseAt = OffsetDateTime.now();
     }
-
 
     public BaseResponse(T data) {
         this();
         this.data = data;
     }
 
-    public BaseResponse(int statusCode, String message) {
+    public BaseResponse(int statusCode, String message, T data) {
         this();
         this.isSuccess = statusCode == 200;  // 응답 코드가 200이면 성공으로 처리
         this.code = String.valueOf(statusCode);
         this.message = message;
+        this.data = data;
     }
 }
