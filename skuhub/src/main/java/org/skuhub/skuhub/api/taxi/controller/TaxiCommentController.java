@@ -16,7 +16,7 @@ import java.util.List;  // List를 임포트
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(name = "/taxi/posts")
+@RequestMapping(name = "/taxi/comment")
 @Slf4j
 public class TaxiCommentController {
 }

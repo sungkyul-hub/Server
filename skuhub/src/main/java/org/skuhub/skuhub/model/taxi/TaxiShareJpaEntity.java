@@ -18,6 +18,7 @@ import java.util.Set;
 @Setter
 @Table(name = "TAXI_SHARE_TB")
 public class TaxiShareJpaEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id", nullable = false)
@@ -63,6 +64,10 @@ public class TaxiShareJpaEntity {
     @NotNull
     @Column(name = "updated_at", nullable = false)
     private java.time.OffsetDateTime updatedAt;
+
+    @Version
+    @Column(name = "version")
+    private Long version; // 버전 필드 추가
 
     @OneToMany(mappedBy = "post")
     private Set<TaxiCommentJpaEntity> commentTbs = new LinkedHashSet<>();

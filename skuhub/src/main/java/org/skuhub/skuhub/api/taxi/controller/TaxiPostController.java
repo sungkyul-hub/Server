@@ -3,8 +3,10 @@ package org.skuhub.skuhub.api.taxi.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.skuhub.skuhub.api.auth.service.AuthService;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostRequest;
 import org.skuhub.skuhub.api.taxi.dto.response.TaxiPostResponse;
+import org.skuhub.skuhub.common.utills.jwt.dto.JwtDto;
 import org.skuhub.skuhub.model.taxi.TaxiShareJpaEntity;
 import org.skuhub.skuhub.repository.taxi.TaxiShareRepository;
 import org.springframework.http.HttpStatus;
@@ -22,17 +24,18 @@ import java.util.List;  // List를 임포트
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(name = "/taxi/comment")
+@RequestMapping(value = "/taxi/posts")
 @Slf4j
 public class TaxiPostController {
 
     private final TaxiShareRepository taxiShareRepository;
+    private final AuthService authService;
 
     @Operation(summary = "게시글 작성", description = "택시합승 게시글을 올리는 API")
-    @ResponseStatus(HttpStatus.OK)
     @PostMapping("")
     public BaseResponse<String> postsTaxiShare(@RequestBody TaxiPostRequest request) {
-        log.info("Received post request with userId: {}", request.getUserKey());
+        log.info("Received post request with userKey: {}", request.getUserKey());
+        log.info("Received post request with Title: {}", request.getTitle());
 
         TaxiShareJpaEntity entity = new TaxiShareJpaEntity();
         entity.setId(request.getUserKey());
@@ -42,13 +45,15 @@ public class TaxiPostController {
         entity.setRideTime(request.getRideTime());
         entity.setDescription(request.getDescription());
 
-        TaxiShareJpaEntity saved = taxiShareRepository.save(entity);
+        try {
+            TaxiShareJpaEntity saved = taxiShareRepository.save(entity);
+            log.info("TaxiShare saved with userKey: {}", saved.getUserKey());
+            return new BaseResponse<>(true, "200", "택시합승 게시글 저장 성공", OffsetDateTime.now(), "게시글 작성 성공");
+        } catch (Exception e) {
+            log.error("Error saving TaxiShare: {}", e.getMessage());
+            return new BaseResponse<>(false, "500", "게시글 저장 실패", OffsetDateTime.now(), e.getMessage());
+        }
 
 
-
-
-        log.info("TaxiShare saved with userKey: {}", saved.getUserKey());
-
-        return new BaseResponse<>(true, "200", "게시글 저장 성공", OffsetDateTime.now());
     }
 }

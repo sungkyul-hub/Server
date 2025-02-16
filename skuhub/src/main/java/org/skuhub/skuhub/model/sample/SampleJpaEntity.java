@@ -4,6 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.skuhub.skuhub.model.BaseTime;
+import org.skuhub.skuhub.model.taxi.TaxiCommentJpaEntity;
+import org.skuhub.skuhub.model.taxi.TaxiJoinJpaEntity;
+import org.skuhub.skuhub.model.taxi.TaxiShareJpaEntity;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -22,7 +28,7 @@ public class SampleJpaEntity extends BaseTime {
     @Column(name = "email", nullable = false, length = 100)
     private String email;  // 'email' 컬럼에 맞춤
 
-    @Column(name = "password", nullable = false, length = 20)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;  // 'password' 컬럼에 맞춤
 
     @Column(name = "year", nullable = false)
@@ -36,5 +42,14 @@ public class SampleJpaEntity extends BaseTime {
 
     @Column(name = "created_at", nullable = false)
     private java.time.OffsetDateTime createdAt;  // 'created_at' 컬럼에 맞춤
+
+    @OneToMany(mappedBy = "userKey")
+    private Set<TaxiCommentJpaEntity> commentTbs = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "userKey")
+    private Set<TaxiJoinJpaEntity> taxiJoinTbs = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "userKey")
+    private Set<TaxiShareJpaEntity> taxiShareTbs = new LinkedHashSet<>();
 
 }

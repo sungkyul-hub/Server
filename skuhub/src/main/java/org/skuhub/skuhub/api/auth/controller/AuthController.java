@@ -28,22 +28,6 @@ public class AuthController {
     private final MailService mailService;
     private final AuthService authService;
 
-    @Operation(summary = "이메일 인증번호 발송", description = "이메일 인증번호를 발송하는 API")
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/send-email-verification")
-    public BaseResponse<String> sendVerificationCode(@RequestParam String email) {
-        if (!email.endsWith("@sungkyul.ac.kr")) {
-            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "유효하지 않은 이메일 도메인입니다.");
-        }
-
-        try {
-            String authCode = mailService.sendSimpleMessage(email);
-            return new BaseResponse<>(authCode);
-        } catch (MessagingException e) {
-            log.error("메일 발송 오류: {}", e.getMessage(), e);
-            return new BaseResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "메일 발송 실패");
-        }
-    }
 
     @Operation(summary = "이메일 중복여부 검사", description = "이메일 중복여부 검사 API")
     @ResponseStatus(HttpStatus.OK)
