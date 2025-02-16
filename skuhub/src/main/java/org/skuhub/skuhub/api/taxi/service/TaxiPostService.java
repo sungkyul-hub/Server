@@ -1,29 +1,32 @@
-package org.skuhub.skuhub.api.taxi.controller;
+package org.skuhub.skuhub.api.taxi.service;
 
-import io.jsonwebtoken.Jwt;
 import jakarta.persistence.EntityNotFoundException;
-import org.skuhub.skuhub.api.auth.service.AuthService;
+import lombok.Getter;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostRequest;
 import org.skuhub.skuhub.common.response.BaseResponse;
-import org.skuhub.skuhub.common.utills.jwt.dto.JwtDto;
+import org.skuhub.skuhub.common.utills.jwt.JWTUtil;
 import org.skuhub.skuhub.model.taxi.TaxiShareJpaEntity;
 import org.skuhub.skuhub.model.user.UserInfoJpaEntity;
 import org.skuhub.skuhub.repository.taxi.TaxiShareRepository;
 import org.skuhub.skuhub.repository.users.UserInfoRepository;
+import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 
+@Getter
+@Service
 public class TaxiPostService {
-    private final TaxiShareRepository taxiShareRepository;
-    private final UserInfoRepository userInfoRepository;
 
-    public TaxiPostService(TaxiShareRepository taxiShareRepository, UserInfoRepository userInfoRepository, AuthService authService) {
-        this.taxiShareRepository = taxiShareRepository;
-        this.userInfoRepository = userInfoRepository;
+    private  final JWTUtil jwtUtil;
+
+    public TaxiPostService(TaxiShareRepository taxiShareRepository, UserInfoRepository userInfoRepository, JWTUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
     }
 
 
-    public static BaseResponse<String> postTaxiShare(TaxiPostRequest request, TaxiShareRepository taxiShareRepository, UserInfoRepository userInfoRepository) {
+    public static BaseResponse<String> postTaxiShare(TaxiPostRequest request, String authorizationHeader, UserInfoRepository userInfoRepository, TaxiShareRepository taxiShareRepository) {
+//      String userId = jwtUtil.getClaims(authorizationHeader).getSubject();
+
         UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(request.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 

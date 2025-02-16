@@ -14,4 +14,5 @@ public interface AuthService {
     JwtDto reissue(String refreshToken);
 
     boolean getEmailValidity(String email);
+
 }
