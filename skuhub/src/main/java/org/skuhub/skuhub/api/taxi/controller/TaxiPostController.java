@@ -21,18 +21,17 @@ public class TaxiPostController {
     private final TaxiShareRepository taxiShareRepository;
     private final UserInfoRepository userInfoRepository;
     private final JWTUtil jwtUtil;
+    private final TaxiPostService taxiPostService;
 
     @Operation(summary = "게시글 작성", description = "택시합승 게시글을 올리는 API")
     @PostMapping("")
     public BaseResponse<String> postsTaxiShare(
             @RequestHeader("Authorization") String authorizationHeader,
             @RequestBody TaxiPostRequest request) {
+        log.info(authorizationHeader);
         log.info("Received post request with Title: {}", request.getTitle());
 
-        String userId = jwtUtil.getClaims(authorizationHeader).getSubject();
-        log.info(userId);
-
-        return TaxiPostService.postTaxiShare(request, authorizationHeader, userInfoRepository, taxiShareRepository);
-
+        // TaxiPostService의 인스턴스를 사용하여 메소드 호출
+        return taxiPostService.postTaxiShare(request, authorizationHeader);
     }
 }

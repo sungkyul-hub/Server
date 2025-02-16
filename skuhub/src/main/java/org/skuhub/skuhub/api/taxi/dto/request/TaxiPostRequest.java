@@ -10,7 +10,6 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 public class TaxiPostRequest {
-    private String userId;
     private String title;
     private String departureLocation;
     private int numberOfPeople;

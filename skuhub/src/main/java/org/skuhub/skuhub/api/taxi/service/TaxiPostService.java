@@ -17,17 +17,22 @@ import java.time.OffsetDateTime;
 @Service
 public class TaxiPostService {
 
-    private  final JWTUtil jwtUtil;
+    private final JWTUtil jwtUtil;
+    private final TaxiShareRepository taxiShareRepository;
+    private final UserInfoRepository userInfoRepository;
 
     public TaxiPostService(TaxiShareRepository taxiShareRepository, UserInfoRepository userInfoRepository, JWTUtil jwtUtil) {
+        this.taxiShareRepository = taxiShareRepository;
+        this.userInfoRepository = userInfoRepository;
         this.jwtUtil = jwtUtil;
     }
 
+    // static 메소드를 non-static으로 변경
+    public BaseResponse<String> postTaxiShare(TaxiPostRequest request, String authorizationHeader) {
+        String token = authorizationHeader.trim().substring(7);
+        String userId = jwtUtil.getClaims(token).getSubject();
 
-    public static BaseResponse<String> postTaxiShare(TaxiPostRequest request, String authorizationHeader, UserInfoRepository userInfoRepository, TaxiShareRepository taxiShareRepository) {
-//      String userId = jwtUtil.getClaims(authorizationHeader).getSubject();
-
-        UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(request.getUserId())
+        UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         TaxiShareJpaEntity entity = new TaxiShareJpaEntity();
