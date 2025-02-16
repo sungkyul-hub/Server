@@ -10,11 +10,11 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 public class TaxiPostRequest {
-
-    private int userKey;
+    @NotNull // 필수 입력값
+    private String userId;
     private String title;
     private String departureLocation;
-    private int headCount;
+    private int numberOfPeople;
     private OffsetDateTime rideTime;
     private String description;
 

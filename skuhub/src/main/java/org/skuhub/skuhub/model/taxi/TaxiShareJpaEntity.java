@@ -6,10 +6,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
-import org.skuhub.skuhub.model.BaseTime;
-import org.skuhub.skuhub.model.sample.SampleJpaEntity;
+import org.skuhub.skuhub.model.user.UserInfoJpaEntity;
 
-import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -22,12 +21,12 @@ public class TaxiShareJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id", nullable = false)
-    private Integer id;
+    private Long id;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_key", nullable = false)
-    private SampleJpaEntity userKey;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_key")
+    private UserInfoJpaEntity userKey;
+
 
     @Size(max = 20)
     @NotNull
@@ -50,7 +49,7 @@ public class TaxiShareJpaEntity {
     @NotNull
     @ColumnDefault("0")
     @Column(name = "head_count", nullable = false)
-    private Integer headCount;
+    private Integer headCount = 0;
 
     @Size(max = 200)
     @NotNull
@@ -68,6 +67,15 @@ public class TaxiShareJpaEntity {
     @Version
     @Column(name = "version")
     private Long version; // 버전 필드 추가
+
+
+
+    @PrePersist
+    public void prePersist() {
+        OffsetDateTime now = OffsetDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now; // 업데이트 시간도 현재로 설정
+    }
 
     @OneToMany(mappedBy = "post")
     private Set<TaxiCommentJpaEntity> commentTbs = new LinkedHashSet<>();

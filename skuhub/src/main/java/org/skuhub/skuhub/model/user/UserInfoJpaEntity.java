@@ -4,8 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.skuhub.skuhub.model.taxi.TaxiCommentJpaEntity;
+import org.skuhub.skuhub.model.taxi.TaxiJoinJpaEntity;
+import org.skuhub.skuhub.model.taxi.TaxiShareJpaEntity;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "USER_INFO_TB")
@@ -48,5 +53,17 @@ public class UserInfoJpaEntity {
         @UpdateTimestamp
         @Column(name = "updated_at")
         private LocalDateTime updatedAt;
+
+        @Setter
+        @OneToMany(mappedBy = "userKey")
+        private Set<TaxiCommentJpaEntity> commentTbs = new LinkedHashSet<>();
+
+        @Setter
+        @OneToMany(mappedBy = "userKey")
+        private Set<TaxiJoinJpaEntity> taxiJoinTbs = new LinkedHashSet<>();
+
+        @Setter
+        @OneToMany(mappedBy = "userKey")
+        private Set<TaxiShareJpaEntity> taxiShareTbs = new LinkedHashSet<>();
 
 }

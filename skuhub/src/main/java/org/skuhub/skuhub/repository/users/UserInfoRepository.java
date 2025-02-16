@@ -8,5 +8,6 @@ import java.util.Optional;
 public interface UserInfoRepository extends JpaRepository<UserInfoJpaEntity, Long> {
     boolean existsByEmail(String email);
     Optional<UserInfoJpaEntity> findByEmail(String email);
+    Optional<UserInfoJpaEntity> findByUserId(String userId); // userId로 찾는 메소드
 }
 
