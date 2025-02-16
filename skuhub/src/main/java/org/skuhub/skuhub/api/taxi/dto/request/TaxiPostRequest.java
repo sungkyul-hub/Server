@@ -1,5 +1,7 @@
 package org.skuhub.skuhub.api.taxi.dto.request;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,11 +11,11 @@ import java.time.OffsetDateTime;
 @Setter
 public class TaxiPostRequest {
 
+    private int userKey;
     private String title;
-    private String departure_location;
-    private int head_count;
-    private String ride_time;
+    private String departureLocation;
+    private int headCount;
+    private OffsetDateTime rideTime;
     private String description;
-    private OffsetDateTime created_at;
-    private String name;
+
 }

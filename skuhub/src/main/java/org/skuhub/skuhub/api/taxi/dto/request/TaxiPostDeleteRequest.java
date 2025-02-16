@@ -9,5 +9,5 @@ import java.time.OffsetDateTime;
 @Setter
 public class TaxiPostDeleteRequest {
 
-    private int post_id;
+    private int postId;
 }

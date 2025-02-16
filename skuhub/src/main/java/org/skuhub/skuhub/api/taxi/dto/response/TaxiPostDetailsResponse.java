@@ -11,13 +11,13 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class TaxiPostDetailsResponse {
-    private int post_id;
+    private int postId;
     private String title;
     private String description;
-    private OffsetDateTime ride_time;
-    private OffsetDateTime created_at;
+    private OffsetDateTime rideTime;
+    private OffsetDateTime createdAt;
     private String name;
     private int status;
-    private int number_of_people;
+    private int numberOfPeople;
     private List<TaxiCommentRequest> comments;
 }

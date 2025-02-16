@@ -12,6 +12,6 @@ import java.time.OffsetDateTime;
 public class TaxiCommentResponse {
 
     private String name;
-    private String comment_content;
-    private OffsetDateTime created_at;
+    private String commentContent;
+    private OffsetDateTime createdAt;
 }

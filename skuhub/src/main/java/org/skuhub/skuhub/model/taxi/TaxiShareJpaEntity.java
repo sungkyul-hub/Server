@@ -40,7 +40,7 @@ public class TaxiShareJpaEntity {
 
     @NotNull
     @Column(name = "ride_time", nullable = false)
-    private Instant rideTime;
+    private java.time.OffsetDateTime rideTime;
 
     @NotNull
     @Column(name = "number_of_people", nullable = false)
