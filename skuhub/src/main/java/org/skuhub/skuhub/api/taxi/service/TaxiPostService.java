@@ -3,15 +3,19 @@ package org.skuhub.skuhub.api.taxi.service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Getter;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostRequest;
+import org.skuhub.skuhub.common.enums.exception.ErrorCode;
 import org.skuhub.skuhub.common.response.BaseResponse;
 import org.skuhub.skuhub.common.utills.jwt.JWTUtil;
+import org.skuhub.skuhub.exceptions.CustomException;
 import org.skuhub.skuhub.model.taxi.TaxiShareJpaEntity;
 import org.skuhub.skuhub.model.user.UserInfoJpaEntity;
 import org.skuhub.skuhub.repository.taxi.TaxiShareRepository;
 import org.skuhub.skuhub.repository.users.UserInfoRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Getter
 @Service
@@ -50,4 +54,14 @@ public class TaxiPostService {
             return new BaseResponse<>(false, "500", "게시글 저장 실패", OffsetDateTime.now(), e.getMessage());
         }
     }
+
+//    public BaseResponse<List<TaxiShareJpaEntity>> getTaxiShare(){
+//
+//        List<TaxiShareJpaEntity> taxiShares = taxiShareRepository.findAll(); // 모든 게시글 조회
+//        if(taxiShares.isEmpty()) {
+//            throw new CustomException(ErrorCode.NotFound, "게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+//        }
+//
+//        return new BaseResponse<List<TaxiShareJpaEntity>>(true, "200", "택시합승 게시글 조회 성공", OffsetDateTime.now(), taxiShares);
+//    }
 }
