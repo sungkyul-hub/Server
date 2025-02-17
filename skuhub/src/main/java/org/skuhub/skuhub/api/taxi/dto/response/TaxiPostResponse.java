@@ -1,9 +1,12 @@
 package org.skuhub.skuhub.api.taxi.dto.response;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Getter
@@ -11,13 +14,17 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class TaxiPostResponse {
 
-    private int postId;
+    private Long postId;
+    private String name;
     private String title;
+    private String departureLocation;
     private String description;
     private OffsetDateTime rideTime;
-    private OffsetDateTime createdAt;
-    private String name;
-    private int status;
+    private int headCount;
     private int numberOfPeople;
+    private OffsetDateTime createdAt;
 
+    public TaxiPostResponse() {
+
+    }
 }

@@ -63,9 +63,6 @@ public class TaxiShareJpaEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Version
-    @Column(name = "version")
-    private Long version; // 버전 필드 추가
 
     @PrePersist
     protected void onCreate() {

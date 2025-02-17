@@ -1,5 +1,6 @@
 package org.skuhub.skuhub.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -55,14 +56,17 @@ public class UserInfoJpaEntity {
         private LocalDateTime updatedAt;
 
         @Setter
+        @JsonIgnore
         @OneToMany(mappedBy = "userKey")
         private Set<TaxiCommentJpaEntity> commentTbs = new LinkedHashSet<>();
 
         @Setter
+        @JsonIgnore
         @OneToMany(mappedBy = "userKey")
         private Set<TaxiJoinJpaEntity> taxiJoinTbs = new LinkedHashSet<>();
 
         @Setter
+        @JsonIgnore
         @OneToMany(mappedBy = "userKey")
         private Set<TaxiShareJpaEntity> taxiShareTbs = new LinkedHashSet<>();
 
