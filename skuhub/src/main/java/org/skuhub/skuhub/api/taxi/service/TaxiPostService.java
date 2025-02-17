@@ -159,22 +159,13 @@ public class TaxiPostService {
         }
     }
 
-    public BaseResponse<TaxiPostResponse> getTaxiShareDetail(Long postId, String authorizationHeader) {
-        String token = authorizationHeader.trim().substring(7);
-        String userId = jwtUtil.getClaims(token).getSubject();
-
-        UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    public BaseResponse<TaxiPostResponse> getTaxiShareDetail(Long postId) {
 
         TaxiShareJpaEntity postEntity = taxiShareRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
         if(postEntity.getUserKey() == null) {
             throw new CustomException(ErrorCode.NotFound, "게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
-        }
-
-        if(!postEntity.getUserKey().getUserId().equals(userEntity.getUserId())) {
-            throw new CustomException(ErrorCode.Forbidden, "조회 권한이 없습니다.", HttpStatus.FORBIDDEN);
         }
 
         TaxiPostResponse response = new TaxiPostResponse();

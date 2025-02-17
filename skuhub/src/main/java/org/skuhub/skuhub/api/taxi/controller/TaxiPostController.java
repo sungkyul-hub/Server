@@ -70,11 +70,9 @@ public class TaxiPostController {
     @Operation(summary = "게시글 상세 조회", description = "택시합승 게시글 상세를 조회하는 API")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/contents/{postId}")
-    public BaseResponse<TaxiPostResponse> getTaxiShareDetail(
-            @RequestHeader("Authorization") String authorizationHeader,
-            @PathVariable Long postId) {
+    public BaseResponse<TaxiPostResponse> getTaxiShareDetail(@PathVariable Long postId) {
 
-        return taxiPostService.getTaxiShareDetail(postId, authorizationHeader);
+        return taxiPostService.getTaxiShareDetail(postId);
     }
 
 }
