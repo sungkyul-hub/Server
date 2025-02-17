@@ -94,15 +94,6 @@ public class TaxiPostService {
 
 
         return new BaseResponse<>(true, "200", "택시합승 게시글 조회 성공", OffsetDateTime.now(), taxiShares);
-//                taxiShare.getId(),
-//                taxiShare.getUserKey().getUserId(),
-//                taxiShare.getTitle(),
-//                taxiShare.getDepartureLocation(),
-//                taxiShare.getRideTime(),
-//                taxiShare.getDescription(),
-//                taxiShare.getHeadCount(),
-//                taxiShare.getNumberOfPeople(),
-//                taxiShare.getCreatedAt()
     }
 
     public BaseResponse<String> postEditTaxiShare(TaxiEditRequest request, String authorizationHeader) {
