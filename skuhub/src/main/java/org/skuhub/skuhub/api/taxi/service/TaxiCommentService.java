@@ -51,7 +51,6 @@ public class TaxiCommentService {
         UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        
 
         return new BaseResponse<>(true, "201", "택시합승 댓글 저장 성공", OffsetDateTime.now(), "댓글 작성 성공");
     }
