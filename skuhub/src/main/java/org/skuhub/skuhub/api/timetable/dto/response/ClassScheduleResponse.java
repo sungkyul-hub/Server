@@ -1,4 +1,4 @@
-package org.skuhub.skuhub.dto.timetable.response;
+package org.skuhub.skuhub.api.timetable.dto.response;
 
 import java.time.ZonedDateTime;
 

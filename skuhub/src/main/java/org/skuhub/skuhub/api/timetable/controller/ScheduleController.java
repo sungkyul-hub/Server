@@ -1,7 +1,7 @@
 package org.skuhub.skuhub.api.timetable.controller;
 
-import org.skuhub.skuhub.dto.timetable.response.ClassScheduleResponse;
-import org.skuhub.skuhub.service.TimetableService;
+import org.skuhub.skuhub.api.timetable.dto.response.ClassScheduleResponse;
+import org.skuhub.skuhub.api.timetable.service.TimetableService;
 import org.skuhub.skuhub.common.response.BaseResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +24,8 @@ public class ScheduleController {
      */
     @GetMapping("/schedule/class")
     public ResponseEntity<BaseResponse<List<ClassScheduleResponse>>> getAllClassSchedules() {
-        List<ClassScheduleResponse> schedules = timetableService.getAllSchedules();
+        List<ClassScheduleResponse> schedules;
+        schedules = timetableService.getAllSchedules();
 
         if (schedules.isEmpty()) {
             return ResponseEntity.status(404)

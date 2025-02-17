@@ -41,4 +41,7 @@ public class BaseResponse<T> {
         this();
         this.data = data;
     }
+
+    public BaseResponse(boolean b, String s, Object o) {
+    }
 }
