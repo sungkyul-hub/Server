@@ -5,6 +5,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiEditRequest;
+import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostDeleteRequest;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostRequest;
 import org.skuhub.skuhub.api.taxi.dto.response.TaxiPostResponse;
 import org.skuhub.skuhub.common.enums.exception.ErrorCode;
@@ -130,5 +131,66 @@ public class TaxiPostService {
         } catch (Exception e) {
             return new BaseResponse<>(false, "500", "게시글 수정 실패", OffsetDateTime.now(), e.getMessage());
         }
+    }
+
+    public BaseResponse<String> deleteTaxiShare(TaxiPostDeleteRequest request, String authorizationHeader) {
+        String token = authorizationHeader.trim().substring(7);
+        String userId = jwtUtil.getClaims(token).getSubject();
+
+        UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        TaxiShareJpaEntity postEntity = taxiShareRepository.findById(request.getPostId())
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+        if(postEntity.getUserKey() == null) {
+            throw new CustomException(ErrorCode.NotFound, "게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+        }
+
+        if(!postEntity.getUserKey().getUserId().equals(userEntity.getUserId())) {
+            throw new CustomException(ErrorCode.Forbidden, "삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+
+        try {
+            taxiShareRepository.deleteById(request.getPostId());
+            return new BaseResponse<>(true, "200", "택시합승 게시글 삭제 성공", OffsetDateTime.now(), "게시글 삭제 성공");
+        } catch (Exception e) {
+            return new BaseResponse<>(false, "500", "게시글 삭제 실패", OffsetDateTime.now(), e.getMessage());
+        }
+    }
+
+    public BaseResponse<TaxiPostResponse> getTaxiShareDetail(Long postId, String authorizationHeader) {
+        String token = authorizationHeader.trim().substring(7);
+        String userId = jwtUtil.getClaims(token).getSubject();
+
+        UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        TaxiShareJpaEntity postEntity = taxiShareRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+        if(postEntity.getUserKey() == null) {
+            throw new CustomException(ErrorCode.NotFound, "게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+        }
+
+        if(!postEntity.getUserKey().getUserId().equals(userEntity.getUserId())) {
+            throw new CustomException(ErrorCode.Forbidden, "조회 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+
+        TaxiPostResponse response = new TaxiPostResponse();
+        response.setPostId(postEntity.getId());
+        response.setName(postEntity.getUserKey().getUserId()); // userId 설정
+        response.setTitle(postEntity.getTitle());
+        response.setDepartureLocation(postEntity.getDepartureLocation());
+        response.setRideTime(postEntity.getRideTime());
+        response.setDescription(postEntity.getDescription());
+        response.setHeadCount(postEntity.getHeadCount());
+        response.setNumberOfPeople(postEntity.getNumberOfPeople());
+        LocalDateTime createdAt = postEntity.getCreatedAt();
+        OffsetDateTime offsetCreatedAt = createdAt.atOffset(ZoneOffset.UTC);
+        response.setCreatedAt(offsetCreatedAt);
+
+        return new BaseResponse<>(true, "200", "택시합승 게시글 상세 조회 성공", OffsetDateTime.now(), response);
+
     }
 }

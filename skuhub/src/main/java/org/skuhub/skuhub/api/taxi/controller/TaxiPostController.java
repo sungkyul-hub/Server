@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiEditRequest;
+import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostDeleteRequest;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostRequest;
 import org.skuhub.skuhub.api.taxi.dto.response.TaxiPostResponse;
 import org.skuhub.skuhub.api.taxi.service.TaxiPostService;
@@ -54,4 +55,26 @@ public class TaxiPostController {
         return taxiPostService.postEditTaxiShare(request, authorizationHeader);
 
     }
+
+    @Operation(summary = "게시글 삭제", description = "택시합승 게시글들을 삭제하는 API")
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/delete")
+    public BaseResponse<String> deleteTaxiShare(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestBody TaxiPostDeleteRequest request) {
+
+        return taxiPostService.deleteTaxiShare(request, authorizationHeader);
+
+    }
+
+    @Operation(summary = "게시글 상세 조회", description = "택시합승 게시글 상세를 조회하는 API")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/contents/{postId}")
+    public BaseResponse<TaxiPostResponse> getTaxiShareDetail(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @PathVariable Long postId) {
+
+        return taxiPostService.getTaxiShareDetail(postId, authorizationHeader);
+    }
+
 }
