@@ -103,10 +103,10 @@ public class MailService {
         return number; // 인증번호 반환
     }
 
-    //비ㅏ밀번호 변경용 인증번호 발송 메소드
     public boolean verifyCode(String email, String code) {
         return verificationCodes.containsKey(email) && verificationCodes.get(email).equals(code);
     }
+
 
 
     // 커스텀 예외 정의 (선택 사항)

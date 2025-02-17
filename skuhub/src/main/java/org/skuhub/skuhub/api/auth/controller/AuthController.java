@@ -141,10 +141,28 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/email/duplicated")
     public BaseResponse<ValidResponse> getEmailDuplicated(@RequestParam String email) {
-        return new BaseResponse<>(ValidResponse.builder()
-                .valid(authService.getEmailValidity(email))
-                .build());
+        try {
+            boolean isValid = authService.getEmailValidity(email);
+
+            // ValidResponse 객체를 생성하여 data로 설정
+            return BaseResponse.<ValidResponse>builder()
+                    .isSuccess(true)
+                    .code("200")
+                    .message("이메일 중복여부 검사 완료")
+                    .data(ValidResponse.builder().valid(isValid).build())  // ValidResponse 타입을 설정
+                    .build();
+        } catch (Exception e) {
+            // 실패시 error 메시지 전달
+            return BaseResponse.<ValidResponse>builder()
+                    .isSuccess(false)
+                    .code("400")
+                    .message("이메일 중복여부 검사 실패")
+                    .data(ValidResponse.builder().valid(false).build())  // 실패시 false 반환
+                    .build();
+        }
     }
+
+
 
     @Operation(summary = "토큰 재발급", description = "리프레쉬 토큰 기반 액세스 토큰을 재발급 받는 API")
     @ResponseStatus(HttpStatus.OK)
