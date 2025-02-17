@@ -23,6 +23,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserInfoRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JWTUtil jwtUtil;
+    private final MailService mailService;
 
     @Override
     @Transactional
@@ -81,4 +82,5 @@ public class AuthServiceImpl implements AuthService {
     private String generateUserIdFromEmail(String email) {
         return email.split("@")[0]; // 예: email@example.com -> "email"
     }
+
 }

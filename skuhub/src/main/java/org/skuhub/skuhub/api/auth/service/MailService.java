@@ -41,6 +41,7 @@ public class MailService {
         return key.toString();
     }
 
+    // 메일 생성 (일반 인증번호용)
     public MimeMessage createMail(String mail, String number) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
 
@@ -55,7 +56,22 @@ public class MailService {
         return message;
     }
 
-    // 메일 발송
+    // 메일 생성 (비밀번호 변경 인증번호용)
+    public MimeMessage createPasswordResetMail(String mail, String number) throws MessagingException {
+        MimeMessage message = javaMailSender.createMimeMessage();
+
+        message.setFrom(senderEmail);
+        message.setRecipients(MimeMessage.RecipientType.TO, mail);
+        message.setSubject("[비밀번호 변경] 이메일 인증");
+        String body = "<h3>요청하신 비밀번호 변경 인증 번호입니다.</h3>";
+        body += "<h1>" + number + "</h1>";
+        body += "<h3>감사합니다.</h3>";
+        message.setText(body, "UTF-8", "html");
+
+        return message;
+    }
+
+    // 메일 발송 (일반 인증번호용)
     public String sendSimpleMessage(String sendEmail) throws MessagingException {
         String number = createNumber(); // 랜덤 인증번호 생성
 
@@ -71,11 +87,27 @@ public class MailService {
         return number; // 생성된 인증번호 반환
     }
 
-    // 인증번호 검증
-    public boolean verifyCode(String email, String code) {
-        String storedCode = verificationCodes.get(email); // 저장된 인증번호 가져오기
-        return storedCode != null && storedCode.equals(code); // 입력된 코드와 비교
+    // 비밀번호 변경용 인증번호 발송 메소드
+    public String sendPasswordResetEmail(String sendEmail) throws MessagingException {
+        String number = createNumber(); // 랜덤 인증번호 생성
+
+        MimeMessage message = createPasswordResetMail(sendEmail, number); // 비밀번호 변경 인증 메일 생성
+        try {
+            javaMailSender.send(message); // 메일 발송
+            verificationCodes.put(sendEmail, number); // 이메일과 인증번호 저장
+        } catch (MailException e) {
+            e.printStackTrace();
+            throw new MailSendException("메일 발송 중 오류가 발생했습니다.");
+        }
+
+        return number; // 인증번호 반환
     }
+
+    // 인증번호 확인 메소드
+    public boolean verifyCode(String email, String code) {
+        return verificationCodes.containsKey(email) && verificationCodes.get(email).equals(code);
+    }
+
 
     // 커스텀 예외 정의 (선택 사항)
     public static class MailSendException extends RuntimeException {

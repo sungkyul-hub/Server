@@ -12,9 +12,11 @@ import org.skuhub.skuhub.api.auth.service.AuthService;
 import org.skuhub.skuhub.api.auth.service.MailService;
 import org.skuhub.skuhub.common.response.BaseResponse;
 import org.skuhub.skuhub.common.utills.jwt.dto.JwtDto;
+import org.skuhub.skuhub.exceptions.CustomException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.mail.MessagingException;
+import org.skuhub.skuhub.api.user.service.UserService;
 
 import static org.hibernate.query.sqm.tree.SqmNode.log;
 
@@ -27,6 +29,7 @@ public class AuthController {
 
     private final MailService mailService;
     private final AuthService authService;
+    private final UserService userService;
 
     @Operation(summary = "이메일 인증번호 발송", description = "이메일 인증번호를 발송하는 API")
     @ResponseStatus(HttpStatus.OK)
@@ -45,6 +48,34 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "비밀번호 변경용 이메일 인증번호 발송", description = "비밀번호 변경을 위한 이메일 인증번호를 발송하는 API")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/send-password-reset-verification")
+    public BaseResponse<String> sendPasswordResetVerificationCode(@RequestParam String email, @RequestParam String userId) {
+        // 이메일 도메인 검사
+        if (!email.endsWith("@sungkyul.ac.kr")) {
+            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "유효하지 않은 이메일 도메인입니다.", "유효하지 않은 이메일 도메인입니다.");
+        }
+
+        try {
+            // 유저 아이디 검사 (예시: DB에서 유저 아이디 존재 여부 확인)
+            boolean isUserValid = userService.isUserValid(userId); // 유저 아이디가 유효한지 체크하는 서비스 메서드 호출
+            if (!isUserValid) {
+                return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "아이디가 올바르지 않습니다.", "유효하지 않은 유저 아이디입니다.");
+            }
+
+            // 이메일과 유저아이디 검증 후 비밀번호 변경 인증번호 발송
+            String authCode = mailService.sendPasswordResetEmail(email); // 비밀번호 변경 인증번호 발송
+            return new BaseResponse<>(HttpStatus.OK.value(), "메일 발송 성공", authCode);
+        } catch (MessagingException e) {
+            log.error("메일 발송 오류: {}", e.getMessage(), e);
+            return new BaseResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "메일 발송 실패", "메일 발송 실패");
+        } catch (CustomException e) {
+            // 유저 아이디가 유효하지 않을 경우 예외 처리
+            return new BaseResponse<>(e.getStatus().value(), e.getMessage(), e.getMessage());
+        }
+    }
+
     @Operation(summary = "이메일 인증번호 확인", description = "사용자가 입력한 인증번호를 검증하는 API")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/verfy-email")
@@ -58,6 +89,18 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "비밀번호 변경용 이메일 인증번호 확인", description = "비밀번호 변경을 위한 이메일 인증번호를 검증하는 API")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/find-password/verify-email")
+    public BaseResponse<String> verifyPasswordResetCode(@RequestParam String email, @RequestParam String code) {
+        if (mailService.verifyCode(email, code)) {
+            return new BaseResponse<>(HttpStatus.OK.value(), "비밀번호 변경 인증에 성공하였습니다.", "비밀번호 변경 인증에 성공하였습니다.");
+        } else {
+            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "비밀번호 변경 인증에 실패하였습니다.", "비밀번호 변경 인증에 실패하였습니다.");
+        }
+    }
+
+    
     @Operation(summary = "이메일 중복여부 검사", description = "이메일 중복여부 검사 API")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/email/duplicated")
