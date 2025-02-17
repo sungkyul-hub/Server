@@ -21,7 +21,6 @@ import java.util.List;
 @Slf4j
 public class TaxiPostController {
 
-    private final TaxiShareRepository taxiShareRepository;
     private final TaxiPostService taxiPostService;
 
     @Operation(summary = "게시글 작성", description = "택시합승 게시글을 올리는 API")

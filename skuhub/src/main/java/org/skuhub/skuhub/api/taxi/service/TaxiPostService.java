@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.skuhub.skuhub.api.taxi.dto.request.TaxiCommentRequest;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiEditRequest;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostDeleteRequest;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostRequest;
