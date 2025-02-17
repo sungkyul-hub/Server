@@ -100,8 +100,20 @@ public class TaxiPostService {
         String token = authorizationHeader.trim().substring(7);
         String userId = jwtUtil.getClaims(token).getSubject();
 
+
         UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        TaxiShareJpaEntity postEntity = taxiShareRepository.findById(request.getPostId())
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+        if(postEntity.getUserKey() == null) {
+            throw new CustomException(ErrorCode.NotFound, "게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+        }
+
+        if(!postEntity.getUserKey().getUserId().equals(userId)) {
+            throw new CustomException(ErrorCode.Forbidden, "수정 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
 
         TaxiShareJpaEntity entity = new TaxiShareJpaEntity();
         entity.setUserKey(userEntity);

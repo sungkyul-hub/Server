@@ -46,7 +46,7 @@ public class TaxiPostController {
 
     @Operation(summary = "게시글 수정", description = "택시합승 게시글들을 수정하는 API")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/edit")
+    @PostMapping("/edit")
     public BaseResponse<String> editTaxiShare(
             @RequestHeader("Authorization") String authorizationHeader,
             @RequestBody TaxiEditRequest request) {
