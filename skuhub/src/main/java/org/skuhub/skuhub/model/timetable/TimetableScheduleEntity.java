@@ -12,7 +12,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ScheduleEntity {
+public class TimetableScheduleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

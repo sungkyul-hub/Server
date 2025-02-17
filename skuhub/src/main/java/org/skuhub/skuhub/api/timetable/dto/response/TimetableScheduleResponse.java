@@ -5,7 +5,7 @@ import java.time.ZonedDateTime;
 /**
  * 강의 시간표 응답 DTO
  */
-public class ClassScheduleResponse {
+public class TimetableScheduleResponse {
     private Long timetableId;
     private int year;
     private String semester;
@@ -22,10 +22,10 @@ public class ClassScheduleResponse {
     private String generalArea;
     private ZonedDateTime createdAt;
 
-    public ClassScheduleResponse(Long timetableId, int year, String semester, String department,
-                                 int grade, String completionType, String subjectCode, int classNumber,
-                                 String subjectName, int credit, String professorName, String classTime,
-                                 String classroom, String generalArea, ZonedDateTime createdAt) {
+    public TimetableScheduleResponse(Long timetableId, int year, String semester, String department,
+                                     int grade, String completionType, String subjectCode, int classNumber,
+                                     String subjectName, int credit, String professorName, String classTime,
+                                     String classroom, String generalArea, ZonedDateTime createdAt) {
         this.timetableId = timetableId;
         this.year = year;
         this.semester = semester;

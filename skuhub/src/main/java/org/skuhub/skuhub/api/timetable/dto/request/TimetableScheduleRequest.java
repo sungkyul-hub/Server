@@ -5,7 +5,7 @@ import java.time.ZonedDateTime;
 /**
  * 강의 시간표 요청 DTO
  */
-public class ClassScheduleRequest {
+public class TimetableScheduleRequest {
     private int year;
     private String semester;
     private String department;
