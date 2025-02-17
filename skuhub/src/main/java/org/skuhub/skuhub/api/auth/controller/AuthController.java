@@ -4,6 +4,7 @@ import groovy.util.logging.Slf4j;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.skuhub.skuhub.api.auth.dto.request.ChangePasswordRequest;
 import org.skuhub.skuhub.api.auth.dto.request.LoginRequest;
 import org.skuhub.skuhub.api.auth.dto.request.ReissueRequest;
 import org.skuhub.skuhub.api.auth.dto.request.SignupRequest;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.mail.MessagingException;
 import org.skuhub.skuhub.api.user.service.UserService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import static org.hibernate.query.sqm.tree.SqmNode.log;
 
@@ -30,6 +32,29 @@ public class AuthController {
     private final MailService mailService;
     private final AuthService authService;
     private final UserService userService;
+
+    @Operation(summary = "회원 가입(일반)", description = "일반 회원 가입 API")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/signup")
+    public BaseResponse<JwtDto> signup(@RequestBody SignupRequest request) {
+        JwtDto jwtDto = authService.signup(request);
+        BaseResponse<JwtDto> response = new BaseResponse<>(jwtDto);
+        response.setCode("201");
+        response.setMessage("회원가입 성공");
+
+        return response;
+    }
+
+    @Operation(summary = "로그인(일반)", description = "일반 로그인 API")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/login")
+    public BaseResponse<JwtDto> login(@RequestBody LoginRequest request) {
+        BaseResponse<JwtDto> response = new BaseResponse<>(authService.login(request));
+        response.setCode("200");
+        response.setMessage("로그인 성공");
+
+        return response;
+    }
 
     @Operation(summary = "이메일 인증번호 발송", description = "이메일 인증번호를 발송하는 API")
     @ResponseStatus(HttpStatus.OK)
@@ -100,7 +125,18 @@ public class AuthController {
         }
     }
 
-    
+    @Operation(summary = "비밀번호 변경", description = "사용자가 이메일 인증 후 비밀번호를 변경하는 API")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/change-password")
+    public BaseResponse<String> changePassword(@RequestBody ChangePasswordRequest request) {
+        try {
+            authService.changePassword(request); // 비밀번호 변경 서비스 호출
+            return new BaseResponse<>(HttpStatus.OK.value(), "비밀번호 변경에 성공하였습니다.", "비밀번호 변경에 성공하였습니다.");
+        } catch (Exception e) {
+            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "비밀번호 변경에 실패하였습니다.", e.getMessage());
+        }
+    }
+
     @Operation(summary = "이메일 중복여부 검사", description = "이메일 중복여부 검사 API")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/email/duplicated")
@@ -117,27 +153,8 @@ public class AuthController {
         return new BaseResponse<>(authService.reissue(request.getRefreshToken()));
     }
 
-    @Operation(summary = "로그인(일반)", description = "일반 로그인 API")
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/login")
-    public BaseResponse<JwtDto> login(@RequestBody LoginRequest request) {
-        BaseResponse<JwtDto> response = new BaseResponse<>(authService.login(request));
-        response.setCode("200");
-        response.setMessage("로그인 성공");
-
-        return response;
-    }
-
-    @Operation(summary = "회원 가입(일반)", description = "일반 회원 가입 API")
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/signup")
-    public BaseResponse<JwtDto> signup(@RequestBody SignupRequest request) {
-        JwtDto jwtDto = authService.signup(request);
-        BaseResponse<JwtDto> response = new BaseResponse<>(jwtDto);
-        response.setCode("201");
-        response.setMessage("회원가입 성공");
-
-        return response;
-    }
 
 }
+
+
+

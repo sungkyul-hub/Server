@@ -50,3 +50,5 @@ public class UserInfoJpaEntity {
         private LocalDateTime updatedAt;
 
 }
+
+

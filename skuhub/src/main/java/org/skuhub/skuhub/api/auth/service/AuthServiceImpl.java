@@ -1,14 +1,18 @@
 package org.skuhub.skuhub.api.auth.service;
 
 import lombok.RequiredArgsConstructor;
+import org.skuhub.skuhub.api.auth.dto.request.ChangePasswordRequest;
 import org.skuhub.skuhub.api.auth.dto.request.SignupRequest;
 import org.skuhub.skuhub.api.auth.dto.request.LoginRequest;
 import org.skuhub.skuhub.common.enums.exception.ErrorCode;
 import org.skuhub.skuhub.common.utills.jwt.JWTUtil;
 import org.skuhub.skuhub.common.utills.jwt.dto.JwtDto;
 import org.skuhub.skuhub.exceptions.CustomException;
+
 import org.skuhub.skuhub.model.user.UserInfoJpaEntity;
+import org.skuhub.skuhub.model.user.UserSetEntity;
 import org.skuhub.skuhub.repository.users.UserInfoRepository;
+import org.skuhub.skuhub.repository.users.UserSetRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,10 +24,10 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+    private final UserSetRepository userSetRepository;
     private final UserInfoRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JWTUtil jwtUtil;
-    private final MailService mailService;
 
     @Override
     @Transactional
@@ -82,5 +86,25 @@ public class AuthServiceImpl implements AuthService {
     private String generateUserIdFromEmail(String email) {
         return email.split("@")[0]; // 예: email@example.com -> "email"
     }
+
+    @Override
+    @Transactional
+    public void changePassword(ChangePasswordRequest request) {
+        // 이메일로 사용자 조회
+        UserSetEntity user = userSetRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+        // 새 비밀번호 암호화
+        String encryptedPassword = passwordEncoder.encode(request.getNewPassword());
+
+        // 비밀번호만 새로 설정한 새 객체 생성
+        user = user.toBuilder()
+                .password(encryptedPassword) // 비밀번호 변경
+                .build();
+
+        // 변경된 비밀번호 저장
+        userSetRepository.save(user);
+    }
+
 
 }

@@ -1,5 +1,6 @@
 package org.skuhub.skuhub.api.auth.service;
 
+import org.skuhub.skuhub.api.auth.dto.request.ChangePasswordRequest;
 import org.skuhub.skuhub.api.auth.dto.request.SignupRequest;
 import org.skuhub.skuhub.common.utills.jwt.dto.JwtDto;
 import org.skuhub.skuhub.api.auth.dto.request.LoginRequest;
@@ -15,4 +16,5 @@ public interface AuthService {
 
     boolean getEmailValidity(String email);
 
+    void changePassword(ChangePasswordRequest request);
 }
