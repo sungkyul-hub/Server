@@ -1,12 +1,14 @@
 package org.skuhub.skuhub.model.timetable;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 @Entity
-@Table(name = "schedule_tb")
+@Table(name = "TIMETABLE_TB")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,22 +18,69 @@ public class TimetableScheduleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long timetableId;
+    @Column(name = "timetable_id", nullable = false)
+    private Integer id;
 
-    private int year;
-    private String semester;
+    @NotNull
+    @Column(name = "year", nullable = false)
+    private Integer year;
+
+    @NotNull
+    @Column(name = "semester", nullable = false)
+    private Integer semester;
+
+    @Size(max = 10)
+    @NotNull
+    @Column(name = "department", nullable = false, length = 10)
     private String department;
-    private int grade;
+
+    @NotNull
+    @Column(name = "grade", nullable = false)
+    private Integer grade;
+
+    @Size(max = 10)
+    @NotNull
+    @Column(name = "completion_type", nullable = false, length = 10)
     private String completionType;
-    private String subjectCode;
-    private int classNumber;
+
+    @NotNull
+    @Column(name = "subject_code", nullable = false)
+    private Integer subjectCode;
+
+    @NotNull
+    @Column(name = "class_number", nullable = false)
+    private Integer classNumber;
+
+    @Size(max = 20)
+    @NotNull
+    @Column(name = "subject_name", nullable = false, length = 20)
     private String subjectName;
-    private int credit;
+
+    @NotNull
+    @Column(name = "credit", nullable = false)
+    private Integer credit;
+
+    @Size(max = 50)
+    @NotNull
+    @Column(name = "professor_name", nullable = false, length = 50)
     private String professorName;
+
+    @Size(max = 10)
+    @NotNull
+    @Column(name = "class_time", nullable = false, length = 10)
     private String classTime;
+
+    @Size(max = 20)
+    @NotNull
+    @Column(name = "classroom", nullable = false, length = 20)
     private String classroom;
+
+    @Size(max = 10)
+    @Column(name = "general_area", length = 10)
     private String generalArea;
 
-    @Column(nullable = false, updatable = false)
-    private ZonedDateTime createdAt = ZonedDateTime.now();
+    @NotNull
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
+
 }

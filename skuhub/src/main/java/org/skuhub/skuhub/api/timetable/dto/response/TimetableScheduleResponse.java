@@ -1,47 +1,49 @@
 package org.skuhub.skuhub.api.timetable.dto.response;
 
-import java.time.ZonedDateTime;
+import lombok.*;
+import java.time.Instant;
+import org.skuhub.skuhub.model.timetable.TimetableScheduleEntity;
 
-/**
- * 강의 시간표 응답 DTO
- */
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class TimetableScheduleResponse {
-    private Long timetableId;
-    private int year;
-    private String semester;
+
+    private Integer id;
+    private Integer year;
+    private Integer semester;
     private String department;
-    private int grade;
+    private Integer grade;
     private String completionType;
-    private String subjectCode;
-    private int classNumber;
+    private Integer subjectCode;
+    private Integer classNumber;
     private String subjectName;
-    private int credit;
+    private Integer credit;
     private String professorName;
     private String classTime;
     private String classroom;
     private String generalArea;
-    private ZonedDateTime createdAt;
+    private Instant createdAt;
 
-    public TimetableScheduleResponse(Long timetableId, int year, String semester, String department,
-                                     int grade, String completionType, String subjectCode, int classNumber,
-                                     String subjectName, int credit, String professorName, String classTime,
-                                     String classroom, String generalArea, ZonedDateTime createdAt) {
-        this.timetableId = timetableId;
-        this.year = year;
-        this.semester = semester;
-        this.department = department;
-        this.grade = grade;
-        this.completionType = completionType;
-        this.subjectCode = subjectCode;
-        this.classNumber = classNumber;
-        this.subjectName = subjectName;
-        this.credit = credit;
-        this.professorName = professorName;
-        this.classTime = classTime;
-        this.classroom = classroom;
-        this.generalArea = generalArea;
-        this.createdAt = createdAt;
+    public static TimetableScheduleResponse fromEntity(TimetableScheduleEntity entity) {
+        return TimetableScheduleResponse.builder()
+                .id(entity.getId())
+                .year(entity.getYear())
+                .semester(entity.getSemester())
+                .department(entity.getDepartment())
+                .grade(entity.getGrade())
+                .completionType(entity.getCompletionType())
+                .subjectCode(entity.getSubjectCode())
+                .classNumber(entity.getClassNumber())
+                .subjectName(entity.getSubjectName())
+                .credit(entity.getCredit())
+                .professorName(entity.getProfessorName())
+                .classTime(entity.getClassTime())
+                .classroom(entity.getClassroom())
+                .generalArea(entity.getGeneralArea())
+                .createdAt(entity.getCreatedAt())
+                .build();
     }
-
-    // Getters (생략 가능)
 }
