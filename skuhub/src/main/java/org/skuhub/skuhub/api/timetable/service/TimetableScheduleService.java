@@ -2,7 +2,7 @@ package org.skuhub.skuhub.api.timetable.service;
 
 import org.skuhub.skuhub.api.timetable.dto.response.TimetableScheduleResponse;
 import org.skuhub.skuhub.model.timetable.TimetableScheduleEntity;
-import org.skuhub.skuhub.repository.timetable.ScheduleRepository;
+import org.skuhub.skuhub.repository.timetable.TimetableScheduleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,14 +11,14 @@ import java.util.stream.Collectors;
 @Service
 public class TimetableScheduleService {
 
-    private final ScheduleRepository scheduleRepository;
+    private final TimetableScheduleRepository timetableScheduleRepository;
 
-    public TimetableScheduleService(ScheduleRepository scheduleRepository) {
-        this.scheduleRepository = scheduleRepository;
+    public TimetableScheduleService(TimetableScheduleRepository timetableScheduleRepository) {
+        this.timetableScheduleRepository = timetableScheduleRepository;
     }
 
     public List<TimetableScheduleResponse> getAllSchedules() {
-        List<TimetableScheduleEntity> schedules = scheduleRepository.findAll();
+        List<TimetableScheduleEntity> schedules = timetableScheduleRepository.findAll();
         return schedules.stream()
                 .map(schedule -> new TimetableScheduleResponse(
                         schedule.getTimetableId(),

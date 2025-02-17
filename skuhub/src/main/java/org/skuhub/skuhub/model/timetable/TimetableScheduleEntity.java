@@ -1,8 +1,11 @@
 package org.skuhub.skuhub.model.timetable;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -14,24 +17,4 @@ import java.time.ZonedDateTime;
 @Builder
 public class TimetableScheduleEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long timetableId;
-
-    private int year;
-    private String semester;
-    private String department;
-    private int grade;
-    private String completionType;
-    private String subjectCode;
-    private int classNumber;
-    private String subjectName;
-    private int credit;
-    private String professorName;
-    private String classTime;
-    private String classroom;
-    private String generalArea;
-
-    @Column(nullable = false, updatable = false)
-    private ZonedDateTime createdAt = ZonedDateTime.now();
 }

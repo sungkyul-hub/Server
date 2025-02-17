@@ -22,25 +22,8 @@ public class TimetableScheduleResponse {
     private String generalArea;
     private ZonedDateTime createdAt;
 
-    public TimetableScheduleResponse(Long timetableId, int year, String semester, String department,
-                                     int grade, String completionType, String subjectCode, int classNumber,
-                                     String subjectName, int credit, String professorName, String classTime,
-                                     String classroom, String generalArea, ZonedDateTime createdAt) {
-        this.timetableId = timetableId;
-        this.year = year;
-        this.semester = semester;
-        this.department = department;
-        this.grade = grade;
-        this.completionType = completionType;
-        this.subjectCode = subjectCode;
-        this.classNumber = classNumber;
-        this.subjectName = subjectName;
-        this.credit = credit;
-        this.professorName = professorName;
-        this.classTime = classTime;
-        this.classroom = classroom;
-        this.generalArea = generalArea;
-        this.createdAt = createdAt;
+    public TimetableScheduleResponse() {
+
     }
 
     // Getters (생략 가능)

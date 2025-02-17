@@ -3,6 +3,7 @@ package org.skuhub.skuhub.api.timetable.controller;
 import org.skuhub.skuhub.api.timetable.dto.response.TimetableScheduleResponse;
 import org.skuhub.skuhub.api.timetable.service.TimetableScheduleService;
 import org.skuhub.skuhub.common.response.BaseResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,11 +11,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/timetable")
-public class TimetableScheduleController {
+public class TimetableController {
 
     private final TimetableScheduleService timetableScheduleService;
 
-    public TimetableScheduleController(TimetableScheduleService timetableScheduleService) {
+    public TimetableController(TimetableScheduleService timetableScheduleService) {
         this.timetableScheduleService = timetableScheduleService;
     }
 
@@ -28,7 +29,7 @@ public class TimetableScheduleController {
         schedules = timetableScheduleService.getAllSchedules();
 
         if (schedules.isEmpty()) {
-            return ResponseEntity.status(404)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new BaseResponse<>(false, "시간표를 찾을 수 없습니다.", null));
         }
 
