@@ -106,12 +106,32 @@ public class JWTUtil {
     public String resolveToken(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
 
-        if (header != null && header.startsWith("Bearer ")) {
-            String subString = header.substring(7);
-            if (StringUtils.hasText(subString)) {
+        if (header != null) {
+            if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
+                // if header format is right
+                if (header.length() < 8) {
+                    throw new CustomException(ErrorCode.Unauthorized, "JWT 토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED);
+                }
+
+                String subString = header.substring(7);
+                if (!StringUtils.hasText(subString)) {
+                    throw new CustomException(ErrorCode.Unauthorized, "JWT 토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED);
+                }
+
                 return subString;
             }
+
         }
-        throw new CustomException(ErrorCode.Unauthorized, "JWT 토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED);
+
+        return null;
+    }
+
+    public String getUserId(HttpServletRequest request) {
+        String resolveToken = resolveToken(request);
+        if(isValidAccessToken(resolveToken)) {
+            throw new CustomException(ErrorCode.Unauthorized, "JWT 토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED);
+        }else{
+            return putUserMDC(getClaims(resolveToken));
+        }
     }
 }

@@ -1,4 +1,4 @@
-package org.skuhub.skuhub.common.utills.jwt.dto;
+package org.skuhub.skuhub.common.jwt.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
