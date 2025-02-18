@@ -17,4 +17,6 @@ public interface AuthService {
     boolean getEmailValidity(String email);
 
     void changePassword(ChangePasswordRequest request);
+
+    boolean isUserIdAvailable(String userId); // 추가된 메서드
 }

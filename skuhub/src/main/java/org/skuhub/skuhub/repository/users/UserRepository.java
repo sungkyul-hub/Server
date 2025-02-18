@@ -12,4 +12,5 @@ public interface UserRepository extends JpaRepository<UserInfoJpaEntity, Integer
     Optional<UserInfoJpaEntity> findByUserId(String userId);  // 추가된 메서드
 
     boolean existsByUserId(String userId);
+
 }

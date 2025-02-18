@@ -3,6 +3,7 @@ package org.skuhub.skuhub.api.auth.controller;
 import groovy.util.logging.Slf4j;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.skuhub.skuhub.api.auth.dto.request.ChangePasswordRequest;
 import org.skuhub.skuhub.api.auth.dto.request.LoginRequest;
@@ -11,15 +12,15 @@ import org.skuhub.skuhub.api.auth.dto.request.SignupRequest;
 import org.skuhub.skuhub.api.auth.dto.response.ValidResponse;
 import org.skuhub.skuhub.api.auth.service.AuthService;
 import org.skuhub.skuhub.api.auth.service.MailService;
+import org.skuhub.skuhub.common.enums.exception.ErrorCode;
 import org.skuhub.skuhub.common.response.BaseResponse;
 import org.skuhub.skuhub.common.utills.jwt.dto.JwtDto;
 import org.skuhub.skuhub.exceptions.CustomException;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import jakarta.mail.MessagingException;
 import org.skuhub.skuhub.api.user.service.UserService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @Slf4j
@@ -162,6 +163,16 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "유저 아이디 중복 검사", description = "회원가입 시 유저 아이디의 중복 여부를 확인하는 API")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/user/duplicate")
+    public BaseResponse<Boolean> checkUserIdDuplication(@RequestParam String userId) {
+        boolean isAvailable = authService.isUserIdAvailable(userId);
+        BaseResponse<Boolean> response = new BaseResponse<>(isAvailable);
+        response.setCode("200");
+        response.setMessage(isAvailable ? "사용 가능한 아이디입니다." : "이미 사용 중인 아이디입니다.");
+        return response;
+    }
 
 
     @Operation(summary = "토큰 재발급", description = "리프레쉬 토큰 기반 액세스 토큰을 재발급 받는 API")
@@ -170,7 +181,6 @@ public class AuthController {
     public BaseResponse<JwtDto> reissue(@RequestBody ReissueRequest request) {
         return new BaseResponse<>(authService.reissue(request.getRefreshToken()));
     }
-
 
 }
 

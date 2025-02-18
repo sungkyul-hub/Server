@@ -106,5 +106,8 @@ public class AuthServiceImpl implements AuthService {
         userSetRepository.save(user);
     }
 
-
+    @Override
+    public boolean isUserIdAvailable(String userId) {
+        return !userRepository.existsByUserId(userId);
+    }
 }
