@@ -9,6 +9,7 @@ import org.skuhub.skuhub.model.BaseTime;
 import org.skuhub.skuhub.model.user.UserInfoJpaEntity;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -20,6 +21,7 @@ public class TaxiJoinJpaEntity {
     private TaxiShareJpaEntity postId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "join_id", nullable = false)
     private Long joinId;
 
@@ -30,8 +32,10 @@ public class TaxiJoinJpaEntity {
 
     @NotNull
     @Column(name = "created_at", nullable = false)
-    private java.time.OffsetDateTime createdAt;
+    private LocalDateTime createdAt;
 
-
-
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

@@ -5,9 +5,10 @@ import org.skuhub.skuhub.api.taxi.dto.request.TaxiCommentEditRequest;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiCommentRequest;
 import org.skuhub.skuhub.api.taxi.dto.response.TaxiCommentResponse;
 import org.skuhub.skuhub.common.response.BaseResponse;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public interface TaxiCommentService {
     public BaseResponse<String> postTaxiComment(TaxiCommentRequest request, String userId);
 

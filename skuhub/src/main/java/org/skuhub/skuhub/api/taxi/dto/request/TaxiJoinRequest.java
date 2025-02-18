@@ -8,5 +8,5 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 public class TaxiJoinRequest {
-    private int postId;
+    private Long postId;
 }

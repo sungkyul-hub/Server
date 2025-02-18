@@ -29,13 +29,11 @@ import static org.codehaus.groovy.runtime.DefaultGroovyMethods.collect;
 @Service
 @Slf4j
 public class TaxiCommentServiceImpl implements TaxiCommentService{
-    private final JWTUtil jwtUtil;
     private final TaxiShareRepository taxiShareRepository;
     private final UserInfoRepository userInfoRepository;
     private final TaxiCommentRepository taxiCommentRepository;
 
-    public TaxiCommentServiceImpl(JWTUtil jwtUtil, TaxiShareRepository taxiShareRepository, UserInfoRepository userInfoRepository, TaxiCommentRepository taxiCommentRepository) {
-        this.jwtUtil = jwtUtil;
+    public TaxiCommentServiceImpl(TaxiShareRepository taxiShareRepository, UserInfoRepository userInfoRepository, TaxiCommentRepository taxiCommentRepository) {
         this.taxiShareRepository = taxiShareRepository;
         this.userInfoRepository = userInfoRepository;
         this.taxiCommentRepository = taxiCommentRepository;
