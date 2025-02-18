@@ -51,7 +51,7 @@ public class TaxiCommentController {
     @Operation(summary = "댓글 삭제", description = "택시합승 댓글을 삭제하는 API")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/delete")
-    public BaseResponse<String> deleteTaxiComment(TaxiCommentDeleteRequest taxiCommentDeleteRequest,HttpServletRequest request) {
+    public BaseResponse<String> deleteTaxiComment(@RequestBody TaxiCommentDeleteRequest taxiCommentDeleteRequest,HttpServletRequest request) {
         String userId = jwtUtil.getUserId(request);
         return taxiCommentServiceImpl.deleteTaxiComment(taxiCommentDeleteRequest, userId);
     }

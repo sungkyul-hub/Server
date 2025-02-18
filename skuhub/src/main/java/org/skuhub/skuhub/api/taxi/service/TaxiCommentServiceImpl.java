@@ -106,8 +106,16 @@ public class TaxiCommentServiceImpl implements TaxiCommentService{
 
     @Override
     public BaseResponse<String> deleteTaxiComment(TaxiCommentDeleteRequest request, String userId) {
+        TaxiCommentJpaEntity comment = taxiCommentRepository.findById(request.getCommentId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+        log.info("게시글 ID: {}", request.getPostId());
 
-        return null;
+        if(comment.getUserKey().getUserId().equals(userId)) {
+            taxiCommentRepository.deleteById(request.getCommentId());
+            return new BaseResponse<>(true, "200", "택시합승 댓글 삭제 성공", OffsetDateTime.now(), "댓글 삭제 성공");
+        }else {
+            throw new CustomException(ErrorCode.BadRequest, "삭제 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

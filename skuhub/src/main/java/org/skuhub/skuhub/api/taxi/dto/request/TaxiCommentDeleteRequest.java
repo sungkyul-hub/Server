@@ -8,6 +8,6 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 public class TaxiCommentDeleteRequest {
-    private int postId;
-    private int commentId;
+    private Long postId;
+    private Long commentId;
 }
