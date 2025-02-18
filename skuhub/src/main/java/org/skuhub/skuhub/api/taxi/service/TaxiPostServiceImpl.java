@@ -30,7 +30,7 @@ import static org.codehaus.groovy.runtime.DefaultGroovyMethods.collect;
 @Getter
 @Service
 @Slf4j
-public class TaxiPostServiceImpl {
+public class TaxiPostServiceImpl implements TaxiPostService {
 
     private final JWTUtil jwtUtil;
     private final TaxiShareRepository taxiShareRepository;
@@ -42,7 +42,7 @@ public class TaxiPostServiceImpl {
         this.jwtUtil = jwtUtil;
     }
 
-public BaseResponse<String> postTaxiShare(String userId, TaxiPostRequest request) {
+    public BaseResponse<String> postTaxiShare(TaxiPostRequest request, String userId) {
 
 
     UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
@@ -95,20 +95,13 @@ public BaseResponse<String> postTaxiShare(String userId, TaxiPostRequest request
         return new BaseResponse<>(true, "200", "택시합승 게시글 조회 성공", OffsetDateTime.now(), taxiShares);
     }
 
-    public BaseResponse<String> postEditTaxiShare(TaxiEditRequest request, String authorizationHeader) {
-        String token = authorizationHeader.trim().substring(7);
-        String userId = jwtUtil.getClaims(token).getSubject();
-
+    public BaseResponse<String> postEditTaxiShare(TaxiEditRequest request, String userId) {
 
         UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자가 존재하지 않습니다."));
 
         TaxiShareJpaEntity postEntity = taxiShareRepository.findById(request.getPostId())
-                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
-
-        if(postEntity.getUserKey() == null) {
-            throw new CustomException(ErrorCode.NotFound, "게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
-        }
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
 
         if(!postEntity.getUserKey().getUserId().equals(userId)) {
             throw new CustomException(ErrorCode.Forbidden, "수정 권한이 없습니다.", HttpStatus.FORBIDDEN);
@@ -168,7 +161,7 @@ public BaseResponse<String> postTaxiShare(String userId, TaxiPostRequest request
 
         TaxiPostResponse response = new TaxiPostResponse();
         response.setPostId(postEntity.getId());
-        response.setName(postEntity.getUserKey().getUserId()); // userId 설정
+        response.setName(postEntity.getUserKey().getName()); // userId 설정
         response.setTitle(postEntity.getTitle());
         response.setDepartureLocation(postEntity.getDepartureLocation());
         response.setRideTime(postEntity.getRideTime());

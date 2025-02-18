@@ -31,7 +31,7 @@ public class TaxiPostController {
     public BaseResponse<String> postsTaxiShare(@RequestBody TaxiPostRequest taxiPostRequest, HttpServletRequest request) {
 
         String userId = jwtUtil.getUserId(request);
-        return taxiPostServiceImpl.postTaxiShare(userId, taxiPostRequest);
+        return taxiPostServiceImpl.postTaxiShare(taxiPostRequest, userId);
     }
 
     @Operation(summary = "게시글 조회", description = "택시합승 게시글들을 조회하는 API")
@@ -46,22 +46,18 @@ public class TaxiPostController {
     @Operation(summary = "게시글 수정", description = "택시합승 게시글들을 수정하는 API")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/edit")
-    public BaseResponse<String> editTaxiShare(
-            @RequestHeader("Authorization") String authorizationHeader,
-            @RequestBody TaxiEditRequest request) {
-
-        return taxiPostServiceImpl.postEditTaxiShare(request, authorizationHeader);
+    public BaseResponse<String> editTaxiShare(@RequestBody TaxiEditRequest taxiEditRequest, HttpServletRequest request) {
+        String userId = jwtUtil.getUserId(request);
+        return taxiPostServiceImpl.postEditTaxiShare(taxiEditRequest, userId);
 
     }
 
     @Operation(summary = "게시글 삭제", description = "택시합승 게시글들을 삭제하는 API")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/delete")
-    public BaseResponse<String> deleteTaxiShare(
-            @RequestHeader("Authorization") String authorizationHeader,
-            @RequestBody TaxiPostDeleteRequest request) {
-
-        return taxiPostServiceImpl.deleteTaxiShare(request, authorizationHeader);
+    public BaseResponse<String> deleteTaxiShare(@RequestBody TaxiPostDeleteRequest taxiPostDeleteRequest, HttpServletRequest request) {
+        String userId = jwtUtil.getUserId(request);
+        return taxiPostServiceImpl.deleteTaxiShare(taxiPostDeleteRequest, userId);
 
     }
 
