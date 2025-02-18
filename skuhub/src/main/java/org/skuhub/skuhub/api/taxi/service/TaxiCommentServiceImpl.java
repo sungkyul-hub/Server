@@ -1,10 +1,9 @@
 package org.skuhub.skuhub.api.taxi.service;
 
-import io.swagger.v3.oas.annotations.Operation;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiCommentRequest;
+import org.skuhub.skuhub.api.taxi.dto.response.TaxiCommentResponse;
 import org.skuhub.skuhub.common.enums.exception.ErrorCode;
 import org.skuhub.skuhub.common.response.BaseResponse;
 import org.skuhub.skuhub.common.utills.jwt.JWTUtil;
@@ -19,7 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.util.Optional;
+import java.util.Comparator;
+import java.util.List;
 
 import static org.codehaus.groovy.runtime.DefaultGroovyMethods.collect;
 
@@ -66,13 +66,27 @@ public class TaxiCommentServiceImpl implements TaxiCommentService{
     }
 
     @Override
-    public BaseResponse<String> getTaxiComment(Long postId) {
+    public BaseResponse<List<TaxiCommentResponse>> getTaxiComment(Long postId) {
         TaxiShareJpaEntity post = taxiShareRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
 
+        // 댓글 조회
+        List<TaxiCommentResponse> comments = taxiCommentRepository.findByPostId(post).stream()
+                .sorted(Comparator.comparing(TaxiCommentJpaEntity::getCreatedAt))
+                .map(comment -> {
+                    TaxiCommentResponse response = new TaxiCommentResponse();
+                    response.setCommentId(comment.getCommentId());
+                    response.setName(comment.getUserKey().getName());
+                    response.setCommentContent(comment.getCommentContent());
+                    response.setCreatedAt(comment.getCreatedAt());
+                    return response;
+                }).toList();
 
+        if(comments.isEmpty()) {
+            throw new CustomException(ErrorCode.NotFound, "댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+        }
 
-        return null;
+        return new BaseResponse<>(true, "200", "택시합승 댓글 조회 성공", OffsetDateTime.now(), comments);
     }
 
 }

@@ -5,11 +5,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiCommentRequest;
+import org.skuhub.skuhub.api.taxi.dto.response.TaxiCommentResponse;
 import org.skuhub.skuhub.api.taxi.service.TaxiCommentServiceImpl;
 import org.skuhub.skuhub.common.utills.jwt.JWTUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.skuhub.skuhub.common.response.BaseResponse;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,7 +34,7 @@ public class TaxiCommentController {
     @Operation(summary = "댓글 조회", description = "택시합승 게시글에 댓글을 조회하는 API")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{postId}")
-    public BaseResponse<String> getTaxiComment(@PathVariable Long postId) {
+    public BaseResponse<List<TaxiCommentResponse>> getTaxiComment(@PathVariable Long postId) {
         return taxiCommentServiceImpl.getTaxiComment(postId);
     }
 }
