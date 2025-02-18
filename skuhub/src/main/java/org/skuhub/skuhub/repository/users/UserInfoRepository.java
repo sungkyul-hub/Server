@@ -11,5 +11,7 @@ public interface UserInfoRepository extends JpaRepository<UserInfoJpaEntity, Lon
     Optional<UserInfoJpaEntity> findByEmail(String email);
 
     boolean existsByUserId(String userId);
+
+    Optional<UserInfoJpaEntity> findByUserId(String userId);
 }
 

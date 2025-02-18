@@ -174,6 +174,17 @@ public class AuthController {
         return response;
     }
 
+    @Operation(summary = "비밀번호 일치 여부 확인", description = "사용자가 입력한 비밀번호가 일치하는지 확인하는 API")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/verify-password")
+    public BaseResponse<String> verifyPassword(@RequestParam String userId, @RequestParam String password) {
+        boolean isValid = authService.isPasswordValid(userId, password);
+        if (isValid) {
+            return new BaseResponse<>(HttpStatus.OK.value(), "비밀번호가 일치합니다.", "비밀번호가 일치합니다.");
+        } else {
+            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다.", "비밀번호가 일치하지 않습니다.");
+        }
+    }
 
     @Operation(summary = "토큰 재발급", description = "리프레쉬 토큰 기반 액세스 토큰을 재발급 받는 API")
     @ResponseStatus(HttpStatus.OK)

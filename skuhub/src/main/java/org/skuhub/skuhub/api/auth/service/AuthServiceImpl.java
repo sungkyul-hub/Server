@@ -110,4 +110,18 @@ public class AuthServiceImpl implements AuthService {
     public boolean isUserIdAvailable(String userId) {
         return !userRepository.existsByUserId(userId);
     }
+
+    @Override
+    public boolean isPasswordValid(String userId, String password) {
+        // userId로 사용자 정보 조회
+        Optional<UserInfoJpaEntity> userOptional = userRepository.findByUserId(userId);
+        if (userOptional.isEmpty()) {
+            throw new CustomException(ErrorCode.NotFound, "사용자가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+        }
+
+        UserInfoJpaEntity user = userOptional.get();
+
+        // 비밀번호 일치 여부 확인
+        return passwordEncoder.matches(password, user.getPassword());
+    }
 }

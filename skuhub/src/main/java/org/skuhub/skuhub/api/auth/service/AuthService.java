@@ -18,5 +18,7 @@ public interface AuthService {
 
     void changePassword(ChangePasswordRequest request);
 
-    boolean isUserIdAvailable(String userId); // 추가된 메서드
+    boolean isUserIdAvailable(String userId);
+
+    boolean isPasswordValid(String userId, String password);
 }
