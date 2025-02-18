@@ -2,13 +2,13 @@ package org.skuhub.skuhub.api.taxi.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.skuhub.skuhub.model.taxi.TaxiShareJpaEntity;
 
 @Getter
 @Setter
 public class TaxiCommentRequest {
 
-    private int postId;
-    private int commentId;
+    private Long postId;
     private String name;
-    private String commentIontent;
+    private String commentContent;
 }

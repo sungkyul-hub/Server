@@ -17,11 +17,11 @@ import java.time.Instant;
 public class TaxiJoinJpaEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private TaxiShareJpaEntity post;
+    private TaxiShareJpaEntity postId;
 
     @Id
     @Column(name = "join_id", nullable = false)
-    private Long id;
+    private Long joinId;
 
 
     @ManyToOne(fetch = FetchType.LAZY)

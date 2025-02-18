@@ -10,8 +10,12 @@ import java.time.OffsetDateTime;
 @Setter
 @AllArgsConstructor
 public class TaxiCommentResponse {
-
+    private Long commentId;
     private String name;
     private String commentContent;
     private OffsetDateTime createdAt;
+
+    public TaxiCommentResponse() {
+
+    }
 }

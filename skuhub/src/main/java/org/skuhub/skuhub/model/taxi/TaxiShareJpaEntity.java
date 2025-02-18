@@ -20,7 +20,7 @@ public class TaxiShareJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id", nullable = false)
-    private Long id;
+    private Long postId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_key")
@@ -71,10 +71,10 @@ public class TaxiShareJpaEntity {
         this.updatedAt = now;
     }
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "postId")
     private Set<TaxiCommentJpaEntity> commentTbs = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "postId")
     private Set<TaxiJoinJpaEntity> taxiJoinTbs = new LinkedHashSet<>();
 
 }

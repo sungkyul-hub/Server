@@ -15,4 +15,7 @@ import java.util.Optional;
 public interface TaxiShareRepository extends JpaRepository<TaxiShareJpaEntity, Long> {
     @Query("SELECT ts FROM TaxiShareJpaEntity ts WHERE ts.createdAt >= :startOfDay AND ts.createdAt < :endOfDay")
     List<TaxiShareJpaEntity> findAllByCreatedAtToday(@Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
+
+    @Query("SELECT p FROM TaxiShareJpaEntity p LEFT JOIN FETCH p.commentTbs WHERE p.postId = :postId")
+    Optional<TaxiShareJpaEntity> findPostWithComments(@Param("postId") Long postId);
 }

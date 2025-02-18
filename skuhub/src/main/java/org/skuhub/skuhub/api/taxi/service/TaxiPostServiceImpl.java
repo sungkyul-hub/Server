@@ -7,13 +7,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiEditRequest;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostDeleteRequest;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostRequest;
+import org.skuhub.skuhub.api.taxi.dto.response.TaxiCommentResponse;
 import org.skuhub.skuhub.api.taxi.dto.response.TaxiPostResponse;
 import org.skuhub.skuhub.common.enums.exception.ErrorCode;
 import org.skuhub.skuhub.common.response.BaseResponse;
 import org.skuhub.skuhub.common.utills.jwt.JWTUtil;
 import org.skuhub.skuhub.exceptions.CustomException;
+import org.skuhub.skuhub.model.taxi.TaxiCommentJpaEntity;
 import org.skuhub.skuhub.model.taxi.TaxiShareJpaEntity;
 import org.skuhub.skuhub.model.user.UserInfoJpaEntity;
+import org.skuhub.skuhub.repository.taxi.TaxiCommentRepository;
 import org.skuhub.skuhub.repository.taxi.TaxiShareRepository;
 import org.skuhub.skuhub.repository.users.UserInfoRepository;
 import org.springframework.http.HttpStatus;
@@ -35,11 +38,13 @@ public class TaxiPostServiceImpl implements TaxiPostService {
     private final JWTUtil jwtUtil;
     private final TaxiShareRepository taxiShareRepository;
     private final UserInfoRepository userInfoRepository;
+    private final TaxiCommentRepository taxiCommentRepository;
 
-    public TaxiPostServiceImpl(TaxiShareRepository taxiShareRepository, UserInfoRepository userInfoRepository, JWTUtil jwtUtil) {
+    public TaxiPostServiceImpl(TaxiShareRepository taxiShareRepository, UserInfoRepository userInfoRepository, JWTUtil jwtUtil, TaxiCommentRepository taxiCommentRepository) {
         this.taxiShareRepository = taxiShareRepository;
         this.userInfoRepository = userInfoRepository;
         this.jwtUtil = jwtUtil;
+        this.taxiCommentRepository = taxiCommentRepository;
     }
 
     public BaseResponse<String> postTaxiShare(TaxiPostRequest request, String userId) {
@@ -73,7 +78,7 @@ public class TaxiPostServiceImpl implements TaxiPostService {
 
         List<TaxiPostResponse> taxiShares = taxiShareRepository.findAllByCreatedAtToday(startOfDay, endOfDay).stream().map(taxiShare -> {
             TaxiPostResponse response = new TaxiPostResponse();
-            response.setPostId(taxiShare.getId());
+            response.setPostId(taxiShare.getPostId());
             response.setName(taxiShare.getUserKey().getName()); // userId 설정
             response.setTitle(taxiShare.getTitle());
             response.setDepartureLocation(taxiShare.getDepartureLocation());
@@ -152,15 +157,12 @@ public class TaxiPostServiceImpl implements TaxiPostService {
 
     public BaseResponse<TaxiPostResponse> getTaxiShareDetail(Long postId) {
 
-        TaxiShareJpaEntity postEntity = taxiShareRepository.findById(postId)
-                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+        TaxiShareJpaEntity postEntity = taxiShareRepository.findPostWithComments(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
 
-        if(postEntity.getUserKey() == null) {
-            throw new CustomException(ErrorCode.NotFound, "게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
-        }
-
+        log.info("commentResponses: {}", postEntity.getCommentTbs().stream().map(TaxiCommentJpaEntity::getCommentContent).collect(Collectors.toList()));
         TaxiPostResponse response = new TaxiPostResponse();
-        response.setPostId(postEntity.getId());
+        response.setPostId(postEntity.getPostId());
         response.setName(postEntity.getUserKey().getName()); // userId 설정
         response.setTitle(postEntity.getTitle());
         response.setDepartureLocation(postEntity.getDepartureLocation());
@@ -171,6 +173,14 @@ public class TaxiPostServiceImpl implements TaxiPostService {
         LocalDateTime createdAt = postEntity.getCreatedAt();
         OffsetDateTime offsetCreatedAt = createdAt.atOffset(ZoneOffset.UTC);
         response.setCreatedAt(offsetCreatedAt);
+        response.setComments(postEntity.getCommentTbs().stream().map(comment -> {
+            TaxiCommentResponse commentResponse = new TaxiCommentResponse();
+            commentResponse.setCommentId(comment.getCommentId());
+            commentResponse.setName(comment.getUserKey().getName());
+            commentResponse.setCommentContent(comment.getCommentContent());
+            commentResponse.setCreatedAt(comment.getCreatedAt());
+            return commentResponse;
+        }).collect(Collectors.toList()));
 
         return new BaseResponse<>(true, "200", "택시합승 게시글 상세 조회 성공", OffsetDateTime.now(), response);
 

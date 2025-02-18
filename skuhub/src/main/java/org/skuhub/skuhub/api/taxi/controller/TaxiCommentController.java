@@ -13,7 +13,7 @@ import org.skuhub.skuhub.common.response.BaseResponse;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(name = "/api/v1/taxi/comment")
+@RequestMapping(value = "/api/v1/taxi/comment")
 @Slf4j
 public class TaxiCommentController {
 
@@ -26,6 +26,5 @@ public class TaxiCommentController {
     public BaseResponse<String> postTaxiComment(@RequestBody TaxiCommentRequest taxiCommentRequest, HttpServletRequest request) {
         String userId = jwtUtil.getUserId(request);
         return taxiCommentServiceImpl.postTaxiComment(taxiCommentRequest, userId);
-
     }
 }
