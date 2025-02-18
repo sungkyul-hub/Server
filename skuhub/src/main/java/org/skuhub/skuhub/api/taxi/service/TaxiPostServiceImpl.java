@@ -132,9 +132,7 @@ public class TaxiPostServiceImpl implements TaxiPostService {
         }
     }
 
-    public BaseResponse<String> deleteTaxiShare(TaxiPostDeleteRequest request, String authorizationHeader) {
-        String token = authorizationHeader.trim().substring(7);
-        String userId = jwtUtil.getClaims(token).getSubject();
+    public BaseResponse<String> deleteTaxiShare(TaxiPostDeleteRequest request, String userId) {
 
         UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));

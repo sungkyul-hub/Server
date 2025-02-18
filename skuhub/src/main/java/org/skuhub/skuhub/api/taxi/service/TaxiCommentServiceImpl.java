@@ -2,6 +2,8 @@ package org.skuhub.skuhub.api.taxi.service;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.skuhub.skuhub.api.taxi.dto.request.TaxiCommentDeleteRequest;
+import org.skuhub.skuhub.api.taxi.dto.request.TaxiCommentEditRequest;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiCommentRequest;
 import org.skuhub.skuhub.api.taxi.dto.response.TaxiCommentResponse;
 import org.skuhub.skuhub.common.enums.exception.ErrorCode;
@@ -87,6 +89,25 @@ public class TaxiCommentServiceImpl implements TaxiCommentService{
         }
 
         return new BaseResponse<>(true, "200", "택시합승 댓글 조회 성공", OffsetDateTime.now(), comments);
+    }
+
+    @Override
+    public BaseResponse<String> editTaxiComment(TaxiCommentEditRequest request, String userId) {
+        TaxiCommentJpaEntity comment = taxiCommentRepository.findById(request.getCommentId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+        if(comment.getUserKey().getUserId().equals(userId)) {
+            comment.setCommentContent(request.getCommentContent());
+            taxiCommentRepository.save(comment);
+            return new BaseResponse<>(true, "200", "택시합승 댓글 수정 성공", OffsetDateTime.now(), "댓글 수정 성공");
+        }else {
+            throw new CustomException(ErrorCode.BadRequest, "수정 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public BaseResponse<String> deleteTaxiComment(TaxiCommentDeleteRequest request, String userId) {
+
+        return null;
     }
 
 }
