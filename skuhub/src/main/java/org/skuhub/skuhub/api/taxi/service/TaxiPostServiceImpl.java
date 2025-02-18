@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.PropertySource;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiEditRequest;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostDeleteRequest;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostRequest;
@@ -27,6 +28,8 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Comparator;
+
 
 import static org.codehaus.groovy.runtime.DefaultGroovyMethods.collect;
 
@@ -160,7 +163,6 @@ public class TaxiPostServiceImpl implements TaxiPostService {
         TaxiShareJpaEntity postEntity = taxiShareRepository.findPostWithComments(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
 
-        log.info("commentResponses: {}", postEntity.getCommentTbs().stream().map(TaxiCommentJpaEntity::getCommentContent).collect(Collectors.toList()));
         TaxiPostResponse response = new TaxiPostResponse();
         response.setPostId(postEntity.getPostId());
         response.setName(postEntity.getUserKey().getName()); // userId 설정
@@ -173,7 +175,9 @@ public class TaxiPostServiceImpl implements TaxiPostService {
         LocalDateTime createdAt = postEntity.getCreatedAt();
         OffsetDateTime offsetCreatedAt = createdAt.atOffset(ZoneOffset.UTC);
         response.setCreatedAt(offsetCreatedAt);
-        response.setComments(postEntity.getCommentTbs().stream().map(comment -> {
+        response.setComments(postEntity.getCommentTbs().stream()
+                .sorted(Comparator.comparing(TaxiCommentJpaEntity::getCreatedAt))
+                .map(comment -> {
             TaxiCommentResponse commentResponse = new TaxiCommentResponse();
             commentResponse.setCommentId(comment.getCommentId());
             commentResponse.setName(comment.getUserKey().getName());

@@ -39,7 +39,6 @@ public class TaxiCommentServiceImpl implements TaxiCommentService{
         this.taxiCommentRepository = taxiCommentRepository;
     }
 
-    @Operation(summary = "댓글 작성", description = "택시합승 게시글에 댓글을 작성하는 API")
     public BaseResponse<String> postTaxiComment(TaxiCommentRequest request, String userId) {
         // userId로 사용자 정보를 찾기
         UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
@@ -64,6 +63,16 @@ public class TaxiCommentServiceImpl implements TaxiCommentService{
         }else {
             throw new CustomException(ErrorCode.BadRequest, "수정 권한이 없습니다.", HttpStatus.BAD_REQUEST);
         }
-
     }
+
+    @Override
+    public BaseResponse<String> getTaxiComment(Long postId) {
+        TaxiShareJpaEntity post = taxiShareRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+
+
+        return null;
+    }
+
 }

@@ -27,4 +27,11 @@ public class TaxiCommentController {
         String userId = jwtUtil.getUserId(request);
         return taxiCommentServiceImpl.postTaxiComment(taxiCommentRequest, userId);
     }
+
+    @Operation(summary = "댓글 조회", description = "택시합승 게시글에 댓글을 조회하는 API")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{postId}")
+    public BaseResponse<String> getTaxiComment(@PathVariable Long postId) {
+        return taxiCommentServiceImpl.getTaxiComment(postId);
+    }
 }

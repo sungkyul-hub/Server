@@ -5,4 +5,6 @@ import org.skuhub.skuhub.common.response.BaseResponse;
 
 public interface TaxiCommentService {
     public BaseResponse<String> postTaxiComment(TaxiCommentRequest request, String userId);
+
+    public BaseResponse<String> getTaxiComment(Long postId);
 }
