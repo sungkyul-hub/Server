@@ -10,5 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface TaxiJoinRepository extends JpaRepository<TaxiJoinJpaEntity, Long> {
-    Optional<Object> findByPostIdAndUserKey(TaxiShareJpaEntity joinTaxi, UserInfoJpaEntity userEntity);
+    Optional<TaxiJoinJpaEntity> findByPostIdAndUserKey(TaxiShareJpaEntity joinTaxi, UserInfoJpaEntity userEntity);
 }

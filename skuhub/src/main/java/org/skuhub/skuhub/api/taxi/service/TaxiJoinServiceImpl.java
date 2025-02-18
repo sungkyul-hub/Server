@@ -16,6 +16,7 @@ import org.skuhub.skuhub.repository.users.UserInfoRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 @Getter
@@ -36,19 +37,29 @@ public class TaxiJoinServiceImpl implements TaxiJoinService{
     public BaseResponse<String> joinTaxiShare(TaxiJoinRequest request, String userId) {
         UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
-        TaxiShareJpaEntity joinTaxi = taxiShareRepository.findById(request.getPostId())
+        TaxiShareJpaEntity shareEntity = taxiShareRepository.findById(request.getPostId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
-        if(joinTaxi.getHeadCount() < joinTaxi.getNumberOfPeople()) {
-            joinTaxi.setHeadCount(joinTaxi.getHeadCount() + 1);
-            taxiShareRepository.save(joinTaxi);
+        TaxiJoinJpaEntity taxiJoin = new TaxiJoinJpaEntity();
+        // 최근 30분 이내 참여 여부 확인
+        LocalDateTime thirtyMinutesAgo = LocalDateTime.now().minusMinutes(30);
+        Optional<TaxiJoinJpaEntity> optionalJoin = taxiJoinRepository.findByPostIdAndUserKey(shareEntity, userEntity);
 
-            if(taxiJoinRepository.findByPostIdAndUserKey(joinTaxi, userEntity).isPresent()){
+        if (optionalJoin.isPresent()) {
+            taxiJoin = optionalJoin.get();
+            if (taxiJoin.getCreatedAt().isAfter(thirtyMinutesAgo)) {
+                return new BaseResponse<>(false, "400", "최근 30분 이내에 참여한 게시글입니다.", OffsetDateTime.now(), "참여 불가");
+            }
+        }
+        if(shareEntity.getHeadCount() < shareEntity.getNumberOfPeople()) {
+            shareEntity.setHeadCount(shareEntity.getHeadCount() + 1);
+            taxiShareRepository.save(shareEntity);
+
+            if(taxiJoinRepository.findByPostIdAndUserKey(shareEntity, userEntity).isPresent()){
                 return new BaseResponse<>(false, "400", "이미 참여한 게시글입니다.", OffsetDateTime.now(), "이미 참여한 게시글입니다.");
             }
-            TaxiJoinJpaEntity entity = new TaxiJoinJpaEntity();
-            entity.setPostId(joinTaxi);
-            entity.setUserKey(userEntity);
-            taxiJoinRepository.save(entity);
+            taxiJoin.setPostId(shareEntity);
+            taxiJoin.setUserKey(userEntity);
+            taxiJoinRepository.save(taxiJoin);
             return new BaseResponse<>(true, "200", "택시합승 참여 성공", OffsetDateTime.now(), "참여 성공");
         }else{
             return new BaseResponse<>(false, "400", "택시합승 참여 실패", OffsetDateTime.now(), "참여 실패");
@@ -57,7 +68,23 @@ public class TaxiJoinServiceImpl implements TaxiJoinService{
 
     @Override
     public BaseResponse<String> leaveTaxiShare(TaxiJoinRequest request, String userId) {
-        return null;
+        UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+        TaxiShareJpaEntity shareEntity = taxiShareRepository.findById(request.getPostId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+        Optional<TaxiJoinJpaEntity> optionalJoin = Optional.ofNullable(taxiJoinRepository.findByPostIdAndUserKey(shareEntity, userEntity)
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "참여한 게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND)));
+        TaxiJoinJpaEntity taxiJoin;
+
+        if(optionalJoin.isPresent() && shareEntity.getHeadCount() > 0){
+            taxiJoin = optionalJoin.get(); 
+            taxiJoinRepository.delete(taxiJoin);
+            shareEntity.setHeadCount(shareEntity.getHeadCount() - 1);
+            taxiShareRepository.save(shareEntity);
+            return new BaseResponse<>(true, "200", "택시합승 참여 취소 성공", OffsetDateTime.now(), "참여 취소 성공");
+        }else{
+            return new BaseResponse<>(false, "400", "택시합승 참여 취소 실패", OffsetDateTime.now(), "참여 취소 실패");
+        }
     }
 
 }
