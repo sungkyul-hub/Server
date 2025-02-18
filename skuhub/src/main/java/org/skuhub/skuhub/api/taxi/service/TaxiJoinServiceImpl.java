@@ -77,7 +77,7 @@ public class TaxiJoinServiceImpl implements TaxiJoinService{
         TaxiJoinJpaEntity taxiJoin;
 
         if(optionalJoin.isPresent() && shareEntity.getHeadCount() > 0){
-            taxiJoin = optionalJoin.get(); 
+            taxiJoin = optionalJoin.get();
             taxiJoinRepository.delete(taxiJoin);
             shareEntity.setHeadCount(shareEntity.getHeadCount() - 1);
             taxiShareRepository.save(shareEntity);
