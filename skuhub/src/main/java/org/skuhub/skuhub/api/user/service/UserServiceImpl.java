@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.skuhub.skuhub.api.user.dto.request.UpdateUserRequest;
 import org.skuhub.skuhub.api.user.dto.response.UpdatedUserInfoResponse;
+import org.skuhub.skuhub.api.user.dto.response.UserInfoResponse;
 import org.skuhub.skuhub.common.enums.exception.ErrorCode;
 import org.skuhub.skuhub.exceptions.CustomException;
 import org.skuhub.skuhub.model.user.UserInfoJpaEntity;
@@ -59,6 +60,15 @@ public class UserServiceImpl implements UserService {
 
         // 업데이트된 사용자 정보를 포함한 응답 객체 반환
         return new UpdatedUserInfoResponse(user.getUserId(), user.getEmail(), user.getDepartment(), user.getName());
+    }
+
+    @Transactional
+    @Override
+    public UserInfoResponse getUserInfo(String userId) {
+        UserInfoJpaEntity user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+        return new UserInfoResponse(user.getDepartment(), user.getYear(), user.getName());
     }
 
 

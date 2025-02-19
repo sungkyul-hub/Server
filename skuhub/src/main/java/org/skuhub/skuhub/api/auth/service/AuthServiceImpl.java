@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -26,6 +28,7 @@ import java.util.Optional;
 public class AuthServiceImpl implements AuthService {
     private final UserSetRepository userSetRepository;
     private final UserInfoRepository userRepository;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final BCryptPasswordEncoder passwordEncoder;
     private final JWTUtil jwtUtil;
 
@@ -56,18 +59,27 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public JwtDto login(LoginRequest request) {
+        // 사용자 조회
         Optional<UserInfoJpaEntity> userOptional = userRepository.findByEmail(request.getEmail());
         if (userOptional.isEmpty()) {
+            logger.warn("사용자 없음: email={}", request.getEmail());
             throw new CustomException(ErrorCode.NotFound, "사용자가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
         }
 
         UserInfoJpaEntity user = userOptional.get();
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+
+        // 비밀번호 확인
+        String encodedPassword = passwordEncoder.encode("sang1002!"); // 가입 시 비밀번호 암호화
+
+        boolean passwordMatches = passwordEncoder.matches(request.getPassword(), user.getPassword());
+        if (!passwordMatches) {
+
             throw new CustomException(ErrorCode.Unauthorized, "비밀번호를 확인해 주세요.", HttpStatus.UNAUTHORIZED);
         }
-
+        // JWT 생성
         return jwtUtil.generateJwtDto(user.getUserId(), "USER");
     }
+
 
     @Override
     public JwtDto reissue(String refreshToken) {
