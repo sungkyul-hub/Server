@@ -48,8 +48,9 @@ public class NoticeJpaEntity {
     private String writer;
 
     @NotNull
+    @Lob
     @Column(name = "notice_original_content", nullable = false)
-    private byte[] noticeOriginalContent;
+    private String noticeOriginalContent;
 
     @Size(max = 10000)
     @NotNull

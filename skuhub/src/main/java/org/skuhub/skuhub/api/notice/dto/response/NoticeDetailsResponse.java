@@ -3,6 +3,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 @Getter
@@ -12,9 +13,13 @@ public class NoticeDetailsResponse {
     private Long noticeId;
     private String category;
     private String title;
-    private OffsetDateTime noticeModifyDate;
+    private LocalDate noticeModifyDate;
     private String writer;
     private String content;
-    private byte[] noticeOriginalContent;
+    private String noticeOriginalContent;
     private String url;
+
+    public NoticeDetailsResponse() {
+
+    }
 }

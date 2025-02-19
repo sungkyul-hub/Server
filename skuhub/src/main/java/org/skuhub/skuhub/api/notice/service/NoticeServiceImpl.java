@@ -1,6 +1,7 @@
 package org.skuhub.skuhub.api.notice.service;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.skuhub.skuhub.api.notice.dto.response.NoticeDetailsResponse;
 import org.skuhub.skuhub.api.notice.dto.response.NoticeResponse;
 import org.skuhub.skuhub.common.enums.exception.ErrorCode;
 import org.skuhub.skuhub.common.response.BaseResponse;
@@ -79,5 +80,25 @@ public class NoticeServiceImpl implements NoticeService {
         }
 
         return new BaseResponse<>(true, "200", "공지사항 카테고리 검색 성공", OffsetDateTime.now(), noticeList);
+    }
+
+    @Override
+    public BaseResponse<NoticeDetailsResponse> detailNotice(Long noticeId) {
+        NoticeDetailsResponse noticeDetailsResponse = noticeRepository.findById(noticeId).map(notice -> {
+            NoticeDetailsResponse response = new NoticeDetailsResponse();
+
+            response.setNoticeId(notice.getId());
+            response.setCategory(notice.getNoticeCategory());
+            response.setTitle(notice.getTitle());
+            response.setNoticeModifyDate(notice.getNoticeModifyDate());
+            response.setWriter(notice.getWriter());
+            response.setContent(notice.getNoticeContent());
+            response.setNoticeOriginalContent(notice.getNoticeOriginalContent());
+            response.setUrl(notice.getUrl());
+
+            return response;
+        }).orElseThrow(() -> new CustomException(ErrorCode.NotFound, "공지사항을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+        return new BaseResponse<>(true, "200", "공지사항 상세보기 성공", OffsetDateTime.now(), noticeDetailsResponse);
     }
 }
