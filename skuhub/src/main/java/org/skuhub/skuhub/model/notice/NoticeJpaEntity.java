@@ -8,6 +8,8 @@ import lombok.Setter;
 import org.skuhub.skuhub.model.user.UserInfoJpaEntity;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -16,15 +18,16 @@ import java.util.Set;
 @Setter
 @Table(name = "NOTICE_TB")
 public class NoticeJpaEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notice_id", nullable = false)
-    private Integer id;
+    private Long id;
 
-    @Size(max = 10)
+    @Size(max = 20)
     @NotNull
-    @Column(name = "notice_type", nullable = false, length = 10)
-    private String noticeType;
+    @Column(name = "notice_category", nullable = false, length = 20)
+    private String noticeCategory;
 
     @Size(max = 50)
     @NotNull
@@ -33,21 +36,24 @@ public class NoticeJpaEntity {
 
     @NotNull
     @Column(name = "notice_date", nullable = false)
-    private Instant noticeDate;
+    private LocalDate noticeDate;
+
+    @NotNull
+    @Column(name = "notice_modify_date", nullable = false)
+    private LocalDate noticeModifyDate;
 
     @Size(max = 10)
     @NotNull
-    @Column(name = "author", nullable = false, length = 10)
-    private String author;
+    @Column(name = "writer", nullable = false, length = 10)
+    private String writer;
+
+    @NotNull
+    @Column(name = "notice_original_content", nullable = false)
+    private byte[] noticeOriginalContent;
 
     @Size(max = 10000)
     @NotNull
-    @Column(name = "notice_original_content", nullable = false, length = 10000)
-    private String noticeOriginalContent;
-
-    @Size(max = 1000)
-    @NotNull
-    @Column(name = "notice_content", nullable = false, length = 1000)
+    @Column(name = "notice_content", nullable = false, length = 10000)
     private String noticeContent;
 
     @Size(max = 500)
@@ -58,6 +64,10 @@ public class NoticeJpaEntity {
     @NotNull
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
+
+    @NotNull
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
 
     @OneToMany(mappedBy = "notice")
     private Set<NotificationHistory> notificationHistories = new LinkedHashSet<>();
