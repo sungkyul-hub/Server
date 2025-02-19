@@ -26,8 +26,9 @@ public class TaxiSearchController {
 
     @Operation(summary = "택시합승 검색", description = "택시합승 게시글을 검색하는 API")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("?keyword={keyword}")
-    public BaseResponse<List<TaxiPostResponse>> searchTaxiShare(@PathVariable String keyword) {
+    @GetMapping("")
+    public BaseResponse<List<TaxiPostResponse>> searchTaxiShare(@RequestParam String keyword) {
+        log.info("keyword: {}", keyword);
         return taxiSearchServiceImpl.searchTaxiShare(keyword);
     }
 }

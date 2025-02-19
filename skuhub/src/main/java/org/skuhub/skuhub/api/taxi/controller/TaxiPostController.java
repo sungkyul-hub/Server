@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiEditRequest;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostDeleteRequest;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostRequest;
+import org.skuhub.skuhub.api.taxi.dto.response.TaxiPostDetailsResponse;
 import org.skuhub.skuhub.api.taxi.dto.response.TaxiPostResponse;
 import org.skuhub.skuhub.api.taxi.service.TaxiPostServiceImpl;
 import org.skuhub.skuhub.common.utills.jwt.JWTUtil;
@@ -64,7 +65,7 @@ public class TaxiPostController {
     @Operation(summary = "게시글 상세 조회", description = "택시합승 게시글 상세를 조회하는 API")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/contents/{postId}")
-    public BaseResponse<TaxiPostResponse> getTaxiShareDetail(@PathVariable Long postId) {
+    public BaseResponse<TaxiPostDetailsResponse> getTaxiShareDetail(@PathVariable Long postId) {
 
         return taxiPostServiceImpl.getTaxiShareDetail(postId);
     }

@@ -9,6 +9,7 @@ import org.skuhub.skuhub.api.taxi.dto.request.TaxiEditRequest;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostDeleteRequest;
 import org.skuhub.skuhub.api.taxi.dto.request.TaxiPostRequest;
 import org.skuhub.skuhub.api.taxi.dto.response.TaxiCommentResponse;
+import org.skuhub.skuhub.api.taxi.dto.response.TaxiPostDetailsResponse;
 import org.skuhub.skuhub.api.taxi.dto.response.TaxiPostResponse;
 import org.skuhub.skuhub.common.enums.exception.ErrorCode;
 import org.skuhub.skuhub.common.response.BaseResponse;
@@ -154,12 +155,12 @@ public class TaxiPostServiceImpl implements TaxiPostService {
         }
     }
 
-    public BaseResponse<TaxiPostResponse> getTaxiShareDetail(Long postId) {
+    public BaseResponse<TaxiPostDetailsResponse> getTaxiShareDetail(Long postId) {
 
         TaxiShareJpaEntity postEntity = taxiShareRepository.findPostWithComments(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
 
-        TaxiPostResponse response = new TaxiPostResponse();
+        TaxiPostDetailsResponse response = new TaxiPostDetailsResponse();
         response.setPostId(postEntity.getPostId());
         response.setName(postEntity.getUserKey().getName()); // userId 설정
         response.setTitle(postEntity.getTitle());

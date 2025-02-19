@@ -18,8 +18,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Getter
 @Service
 @Slf4j
@@ -32,6 +35,27 @@ public class TaxiSearchServiceImpl implements TaxiSearchService {
 
     @Override
     public BaseResponse<List<TaxiPostResponse>> searchTaxiShare(String keyword) {
-        return null;
+        List<TaxiPostResponse> taxiShareJpaEntities = taxiShareRepository.findByTitle(keyword).stream().map(taxiShare -> {
+            TaxiPostResponse response = new TaxiPostResponse();
+            response.setPostId(taxiShare.getPostId());
+            response.setName(taxiShare.getUserKey().getName()); // userId 설정
+            response.setTitle(taxiShare.getTitle());
+            response.setDepartureLocation(taxiShare.getDepartureLocation());
+            response.setRideTime(taxiShare.getRideTime());
+            response.setDescription(taxiShare.getDescription());
+            response.setHeadCount(taxiShare.getHeadCount());
+            response.setNumberOfPeople(taxiShare.getNumberOfPeople());
+            LocalDateTime createdAt = taxiShare.getCreatedAt();
+            OffsetDateTime offsetCreatedAt = createdAt.atOffset(ZoneOffset.UTC);
+            response.setCreatedAt(offsetCreatedAt);
+            return response;
+        }).collect(Collectors.toList()).reversed();
+
+        if(taxiShareJpaEntities.isEmpty()) {
+            throw new CustomException(ErrorCode.NotFound, "게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+        }
+
+
+        return new BaseResponse<>(true, "200", "택시합승 게시글 조회 성공", OffsetDateTime.now(), taxiShareJpaEntities);
     }
 }

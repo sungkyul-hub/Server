@@ -19,4 +19,6 @@ public interface TaxiShareRepository extends JpaRepository<TaxiShareJpaEntity, L
     @Query("SELECT p FROM TaxiShareJpaEntity p LEFT JOIN FETCH p.commentTbs WHERE p.postId = :postId")
     Optional<TaxiShareJpaEntity> findPostWithComments(@Param("postId") Long postId);
 
+    @Query("SELECT p FROM TaxiShareJpaEntity p WHERE p.title LIKE CONCAT('%', :keyword, '%')")
+    List<TaxiShareJpaEntity> findByTitle(@Param("keyword") String keyword);
 }

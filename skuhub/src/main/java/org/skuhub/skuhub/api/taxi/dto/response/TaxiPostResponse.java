@@ -21,7 +21,7 @@ public class TaxiPostResponse {
     private int headCount; // 현재 인원
     private int numberOfPeople; // 총 인원
     private OffsetDateTime createdAt;
-    private List<TaxiCommentResponse> comments;
+//    private List<TaxiCommentResponse> comments;
 
 
     public TaxiPostResponse() {
