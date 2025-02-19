@@ -3,7 +3,6 @@ package org.skuhub.skuhub.api.auth.controller;
 import groovy.util.logging.Slf4j;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.skuhub.skuhub.api.auth.dto.request.ChangePasswordRequest;
 import org.skuhub.skuhub.api.auth.dto.request.LoginRequest;
@@ -12,15 +11,14 @@ import org.skuhub.skuhub.api.auth.dto.request.SignupRequest;
 import org.skuhub.skuhub.api.auth.dto.response.ValidResponse;
 import org.skuhub.skuhub.api.auth.service.AuthService;
 import org.skuhub.skuhub.api.auth.service.MailService;
-import org.skuhub.skuhub.common.enums.exception.ErrorCode;
+import org.skuhub.skuhub.api.user.service.UserService;
 import org.skuhub.skuhub.common.response.BaseResponse;
 import org.skuhub.skuhub.common.utills.jwt.dto.JwtDto;
 import org.skuhub.skuhub.exceptions.CustomException;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import jakarta.mail.MessagingException;
-import org.skuhub.skuhub.api.user.service.UserService;
+import org.skuhub.skuhub.api.user.service.UserServiceImpl;
 import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @Slf4j

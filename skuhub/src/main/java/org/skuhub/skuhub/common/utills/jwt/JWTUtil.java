@@ -114,4 +114,13 @@ public class JWTUtil {
         }
         throw new CustomException(ErrorCode.Unauthorized, "JWT 토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED);
     }
+
+    public String getUserId(HttpServletRequest request) {
+        String resolveToken = resolveToken(request);
+        if(isValidAccessToken(resolveToken)) {
+            throw new CustomException(ErrorCode.Unauthorized, "JWT 토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED);
+        }else{
+            return putUserMDC(getClaims(resolveToken));
+        }
+    }
 }

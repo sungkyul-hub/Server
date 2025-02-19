@@ -1,23 +1,12 @@
 package org.skuhub.skuhub.api.user.service;
 
-import org.skuhub.skuhub.model.user.UserInfoJpaEntity;
-import org.skuhub.skuhub.repository.users.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.skuhub.skuhub.api.user.dto.request.UpdateUserRequest;
+import org.skuhub.skuhub.api.user.dto.response.UpdatedUserInfoResponse;
 
-@Service
-public class UserService {
+public interface UserService {
+    String findUserIdByEmail(String email);
 
-    @Autowired
-    private UserRepository userRepository;
+    boolean isUserValid(String userId);
 
-    public String findUserIdByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .map(UserInfoJpaEntity::getUserId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
-    public boolean isUserValid(String userId) {
-        return userRepository.existsByUserId(userId); // userId가 존재하는지 확인
-    }
+    UpdatedUserInfoResponse updateUserInfo(String userId, UpdateUserRequest request);
 }

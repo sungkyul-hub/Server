@@ -2,22 +2,26 @@ package org.skuhub.skuhub.api.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.skuhub.skuhub.api.user.dto.request.UpdateUserRequest;
 import org.skuhub.skuhub.api.user.dto.request.UserIdRequest;
-import org.skuhub.skuhub.api.user.dto.response.UserIdResponse;
+import org.skuhub.skuhub.api.user.dto.response.UpdatedUserInfoResponse;
 import org.skuhub.skuhub.api.user.service.UserService;
 import org.skuhub.skuhub.common.response.BaseResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.skuhub.skuhub.exceptions.CustomException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.skuhub.skuhub.common.enums.exception.ErrorCode;
+
 
 @RestController
 @Tag(name = "User", description = "User API")
 @RequestMapping("api/v1/user")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
     @Operation(summary = "유저 아이디 찾기", description = "이메일을 통해 유저 아이디를 찾는 API")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/find-username")
@@ -38,5 +42,19 @@ public class UserController {
         // 성공적인 유저 아이디 반환
         return new BaseResponse<>(HttpStatus.OK.value(), "성공적으로 유저 아이디를 찾았습니다.", userId);
     }
+
+    @Operation(summary = "사용자 정보 변경", description = "학과, 비밀번호, 닉네임를 변경하는 API")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/profile/modify/{userId}")
+    public BaseResponse<UpdatedUserInfoResponse> updateUser(@RequestParam String userId, @RequestBody UpdateUserRequest request) {
+        try {
+            UpdatedUserInfoResponse updatedUserInfoResponse = userService.updateUserInfo(userId, request);
+            return new BaseResponse<>(HttpStatus.OK.value(), "사용자 정보가 성공적으로 변경되었습니다.", updatedUserInfoResponse);
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(ErrorCode.NotFound, e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+
 
 }
