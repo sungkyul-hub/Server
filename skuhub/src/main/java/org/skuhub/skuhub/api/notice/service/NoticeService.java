@@ -7,4 +7,6 @@ import java.util.List;
 @Service
 public interface NoticeService {
     public BaseResponse<List<NoticeResponse>> searchNotice(String keyword);
+
+    public BaseResponse<List<NoticeResponse>> categoryNotice(String category);
 }

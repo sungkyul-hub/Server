@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,4 +14,7 @@ import java.util.Optional;
 public interface NoticeRepository extends JpaRepository<NoticeJpaEntity, Long> {
     @Query("SELECT p FROM NoticeJpaEntity p WHERE p.title LIKE CONCAT('%', :keyword, '%')")
     List<NoticeJpaEntity> findByTitle(@Param("keyword") String keyword);
+
+    @Query("SELECT p FROM NoticeJpaEntity p WHERE p.noticeCategory = :keyword")
+    List<NoticeJpaEntity> findByCategory(@Param("keyword") String category);
 }

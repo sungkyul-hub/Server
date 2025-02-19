@@ -32,4 +32,12 @@ public class NoticeController {
         log.info("keyword: {}", keyword);
         return noticeServiceImpl.searchNotice(keyword);
     }
+
+    @Operation(summary = "공지사항 카테고리 검색", description = "공지사항의 카테고리를 검색하는 API")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{category}")
+    public BaseResponse<List<NoticeResponse>> categoryNotice(@PathVariable String category) {
+        log.info("category: {}", category);
+        return noticeServiceImpl.categoryNotice(category);
+    }
 }

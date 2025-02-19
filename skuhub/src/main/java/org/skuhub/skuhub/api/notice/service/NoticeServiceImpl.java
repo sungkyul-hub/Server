@@ -53,4 +53,31 @@ public class NoticeServiceImpl implements NoticeService {
 
         return new BaseResponse<>(true, "200", "공지사항 검색 성공", OffsetDateTime.now(), noticeList);
     }
+
+    @Override
+    public BaseResponse<List<NoticeResponse>> categoryNotice(String category) {
+        List<NoticeResponse> noticeList = noticeRepository.findByCategory(category).stream().map(notice -> {
+
+            NoticeResponse response = new NoticeResponse();
+
+            response.setNoticeId(notice.getId());
+            response.setCategory(notice.getNoticeCategory());
+            response.setTitle(notice.getTitle());
+            response.setNoticeModifyDate(notice.getNoticeModifyDate());
+            response.setWriter(notice.getWriter());
+
+            // content를 30글자로 제한
+            String content = notice.getNoticeContent();
+            response.setContent(content.length() > 50 ? content.substring(0, 50) : content);
+
+            return response;
+        }).collect(Collectors.toList()).reversed();
+
+
+        if(noticeList.isEmpty()) {
+            throw new CustomException(ErrorCode.NotFound, "카테고리 결과가 없습니다.", HttpStatus.NOT_FOUND);
+        }
+
+        return new BaseResponse<>(true, "200", "공지사항 카테고리 검색 성공", OffsetDateTime.now(), noticeList);
+    }
 }
