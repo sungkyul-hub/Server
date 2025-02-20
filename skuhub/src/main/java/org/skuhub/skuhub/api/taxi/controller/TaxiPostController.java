@@ -38,9 +38,11 @@ public class TaxiPostController {
     @Operation(summary = "게시글 조회", description = "택시합승 게시글들을 조회하는 API")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("")
-    public BaseResponse<List<TaxiPostResponse>> getTaxiShare(){
+    public BaseResponse<List<TaxiPostResponse>> getTaxiShare(
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "10") int limit){
 
-        return taxiPostServiceImpl.getTaxiShare();
+        return taxiPostServiceImpl.getTaxiShare(cursor, limit);
     }
 
 

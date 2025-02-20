@@ -10,6 +10,7 @@ import org.skuhub.skuhub.api.taxi.dto.response.TaxiPostResponse;
 import org.skuhub.skuhub.api.taxi.service.TaxiPostServiceImpl;
 import org.skuhub.skuhub.api.taxi.service.TaxiSearchServiceImpl;
 import org.skuhub.skuhub.common.utills.jwt.JWTUtil;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.skuhub.skuhub.common.response.BaseResponse;
@@ -27,8 +28,11 @@ public class TaxiSearchController {
     @Operation(summary = "택시합승 검색", description = "택시합승 게시글을 검색하는 API")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("")
-    public BaseResponse<List<TaxiPostResponse>> searchTaxiShare(@RequestParam String keyword) {
-        log.info("keyword: {}", keyword);
-        return taxiSearchServiceImpl.searchTaxiShare(keyword);
+    public BaseResponse<List<TaxiPostResponse>> searchTaxiShare(
+            @RequestParam String keyword,
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "10") int limit) {
+        log.info("keyword: {}, cursor: {}, limit: {}", keyword, cursor, limit);
+        return taxiSearchServiceImpl.searchTaxiShare(keyword, cursor, limit);
     }
 }

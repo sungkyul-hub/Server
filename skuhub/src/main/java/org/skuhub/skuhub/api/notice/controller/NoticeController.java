@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.skuhub.skuhub.api.notice.dto.response.NoticeDetailsResponse;
 import org.skuhub.skuhub.api.notice.dto.response.NoticeResponse;
 import org.skuhub.skuhub.api.notice.service.NoticeServiceImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.skuhub.skuhub.common.response.BaseResponse;
@@ -21,17 +22,25 @@ public class NoticeController {
     @Operation(summary = "공지사항 검색", description = "공지사항을 검색하는 API")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/search")
-    public BaseResponse<List<NoticeResponse>> searchNotice(@RequestParam String keyword) {
-        log.info("keyword: {}", keyword);
-        return noticeServiceImpl.searchNotice(keyword);
+    public BaseResponse<List<NoticeResponse>> searchNotice(
+            @RequestParam String keyword,
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "10") int limit) {
+
+        log.info("keyword: {}, cursor: {}, limit: {}", keyword, cursor, limit);
+        return noticeServiceImpl.searchNotice(keyword, cursor, limit);
     }
+
 
     @Operation(summary = "공지사항 카테고리 검색", description = "공지사항의 카테고리를 검색하는 API")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/category/{category}")
-    public BaseResponse<List<NoticeResponse>> categoryNotice(@PathVariable String category) {
-        log.info("category: {}", category);
-        return noticeServiceImpl.categoryNotice(category);
+    public BaseResponse<List<NoticeResponse>> categoryNotice(
+            @PathVariable String category,
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "10") int limit) {
+        log.info("category: {}, cursor: {}, limit: {}", category, cursor, limit);
+        return noticeServiceImpl.categoryNotice(category,  cursor, limit);
     }
 
     @Operation(summary = "공지 상세보기", description = "공지를 상세하게 보는 API")

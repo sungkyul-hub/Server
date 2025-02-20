@@ -13,6 +13,8 @@ import org.skuhub.skuhub.model.user.UserInfoJpaEntity;
 import org.skuhub.skuhub.repository.taxi.TaxiJoinRepository;
 import org.skuhub.skuhub.repository.taxi.TaxiShareRepository;
 import org.skuhub.skuhub.repository.users.UserInfoRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -34,8 +36,12 @@ public class TaxiSearchServiceImpl implements TaxiSearchService {
     }
 
     @Override
-    public BaseResponse<List<TaxiPostResponse>> searchTaxiShare(String keyword) {
-        List<TaxiPostResponse> taxiShareJpaEntities = taxiShareRepository.findByTitle(keyword).stream().map(taxiShare -> {
+    public BaseResponse<List<TaxiPostResponse>> searchTaxiShare(String keyword, Long cursor, int limit) {
+        List<TaxiShareJpaEntity> lastPostId = taxiShareRepository.findLastPostId();
+        long cursorValue = cursor != null ? cursor : lastPostId.getFirst().getPostId() + 1;
+        log.info(String.valueOf(lastPostId.getFirst().getPostId()));
+        Pageable pageable = PageRequest.of(0, limit);
+        List<TaxiPostResponse> taxiShareJpaEntities = taxiShareRepository.findByTitle(keyword, cursorValue, pageable).stream().map(taxiShare -> {
             TaxiPostResponse response = new TaxiPostResponse();
             response.setPostId(taxiShare.getPostId());
             response.setName(taxiShare.getUserKey().getName()); // userId 설정
@@ -49,7 +55,7 @@ public class TaxiSearchServiceImpl implements TaxiSearchService {
             OffsetDateTime offsetCreatedAt = createdAt.atOffset(ZoneOffset.UTC);
             response.setCreatedAt(offsetCreatedAt);
             return response;
-        }).collect(Collectors.toList()).reversed();
+        }).collect(Collectors.toList());
 
         if(taxiShareJpaEntities.isEmpty()) {
             throw new CustomException(ErrorCode.NotFound, "게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);

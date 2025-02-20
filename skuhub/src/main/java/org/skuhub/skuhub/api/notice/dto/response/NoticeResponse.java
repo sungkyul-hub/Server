@@ -21,4 +21,5 @@ public class NoticeResponse {
     public NoticeResponse() {
 
     }
+
 }

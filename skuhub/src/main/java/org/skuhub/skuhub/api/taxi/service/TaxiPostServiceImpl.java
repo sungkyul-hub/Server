@@ -21,6 +21,8 @@ import org.skuhub.skuhub.model.user.UserInfoJpaEntity;
 import org.skuhub.skuhub.repository.taxi.TaxiCommentRepository;
 import org.skuhub.skuhub.repository.taxi.TaxiShareRepository;
 import org.skuhub.skuhub.repository.users.UserInfoRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -72,13 +74,17 @@ public class TaxiPostServiceImpl implements TaxiPostService {
 }
 
     @Operation(summary = "게시글 조회", description = "택시합승 게시글들을 조회하는 API")
-    public BaseResponse<List<TaxiPostResponse>> getTaxiShare(){
+    public BaseResponse<List<TaxiPostResponse>> getTaxiShare(Long cursor, int limit) {
+        List<TaxiShareJpaEntity> lastPostId = taxiShareRepository.findLastPostId();
+        long cursorValue = cursor != null ? cursor : lastPostId.getFirst().getPostId() + 1;
+        log.info(String.valueOf(lastPostId.getFirst().getPostId()));
+        Pageable pageable = PageRequest.of(0, limit);
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startOfDay = now.toLocalDate().atStartOfDay();
         LocalDateTime endOfDay = startOfDay.plusDays(1);
 
-        List<TaxiPostResponse> taxiShares = taxiShareRepository.findAllByCreatedAtToday(startOfDay, endOfDay).stream().map(taxiShare -> {
+        List<TaxiPostResponse> taxiShares = taxiShareRepository.findAllByCreatedAtToday(startOfDay, endOfDay, cursorValue, pageable).stream().map(taxiShare -> {
             TaxiPostResponse response = new TaxiPostResponse();
             response.setPostId(taxiShare.getPostId());
             response.setName(taxiShare.getUserKey().getName()); // userId 설정

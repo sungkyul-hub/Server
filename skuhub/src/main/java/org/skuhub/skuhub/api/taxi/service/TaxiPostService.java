@@ -14,7 +14,7 @@ import java.util.List;
 public interface TaxiPostService {
     public BaseResponse<String> postTaxiShare(TaxiPostRequest request, String userId);
 
-    public BaseResponse<List<TaxiPostResponse>> getTaxiShare();
+    public BaseResponse<List<TaxiPostResponse>> getTaxiShare(Long cursor, int limit);
 
     public BaseResponse<String> postEditTaxiShare(TaxiEditRequest request, String authorizationHeader);
 

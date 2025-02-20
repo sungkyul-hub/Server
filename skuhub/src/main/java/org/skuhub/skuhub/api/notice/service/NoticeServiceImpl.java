@@ -7,7 +7,10 @@ import org.skuhub.skuhub.common.enums.exception.ErrorCode;
 import org.skuhub.skuhub.common.response.BaseResponse;
 import org.skuhub.skuhub.common.utills.jwt.JWTUtil;
 import org.skuhub.skuhub.exceptions.CustomException;
+import org.skuhub.skuhub.model.notice.NoticeJpaEntity;
 import org.skuhub.skuhub.repository.notice.NoticeRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +32,12 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public BaseResponse<List<NoticeResponse>> searchNotice(String keyword) {
-        List<NoticeResponse> noticeList = noticeRepository.findByTitle(keyword).stream().map(notice -> {
+    public BaseResponse<List<NoticeResponse>> searchNotice(String keyword, Long cursor, int limit) {
+        List<NoticeJpaEntity> lastNoticeId = noticeRepository.findLastNoticeId();
+        long cursorValue = cursor != null ? cursor : lastNoticeId.get(0).getId() + 1;
+        Pageable pageable = PageRequest.of(0, limit); // 첫 페이지 요청
+        List<NoticeJpaEntity> noticeList = noticeRepository.findByTitleWithCursor(keyword, cursorValue, pageable);
+        List<NoticeResponse> cursorList = noticeList.stream().map(notice -> {
 
             NoticeResponse response = new NoticeResponse();
 
@@ -45,19 +52,22 @@ public class NoticeServiceImpl implements NoticeService {
             response.setContent(content.length() > 50 ? content.substring(0, 50) : content);
 
             return response;
-        }).collect(Collectors.toList()).reversed();
+        }).collect(Collectors.toList());
 
 
-        if(noticeList.isEmpty()) {
+        if(cursorList.isEmpty()) {
             throw new CustomException(ErrorCode.NotFound, "검색 결과가 없습니다.", HttpStatus.NOT_FOUND);
         }
 
-        return new BaseResponse<>(true, "200", "공지사항 검색 성공", OffsetDateTime.now(), noticeList);
+        return new BaseResponse<>(true, "200", "공지사항 검색 성공", OffsetDateTime.now(), cursorList);
     }
 
     @Override
-    public BaseResponse<List<NoticeResponse>> categoryNotice(String category) {
-        List<NoticeResponse> noticeList = noticeRepository.findByCategory(category).stream().map(notice -> {
+    public BaseResponse<List<NoticeResponse>> categoryNotice(String category, Long cursor, int limit) {
+        List<NoticeJpaEntity> lastNoticeId = noticeRepository.findLastNoticeId();
+        long cursorValue = cursor != null ? cursor : lastNoticeId.get(0).getId() + 1;
+        Pageable pageable = PageRequest.of(0, limit); // 첫 페이지 요청
+        List<NoticeResponse> noticeList = noticeRepository.findByCategory(category, cursorValue, pageable).stream().map(notice -> {
 
             NoticeResponse response = new NoticeResponse();
 
@@ -72,7 +82,7 @@ public class NoticeServiceImpl implements NoticeService {
             response.setContent(content.length() > 50 ? content.substring(0, 50) : content);
 
             return response;
-        }).collect(Collectors.toList()).reversed();
+        }).collect(Collectors.toList());
 
 
         if(noticeList.isEmpty()) {
