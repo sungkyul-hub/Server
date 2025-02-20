@@ -70,4 +70,12 @@ public class UserController {
         return ResponseEntity.ok(new BaseResponse<>(200, "사용자 정보 조회 성공", userInfo));
     }
 
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴 API")
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<BaseResponse<String>> withdrawUser(HttpServletRequest request) {
+        String userId = jwtUtil.getUserId(request); // JWT에서 userId 추출
+        userService.withdrawUser(userId); // 회원 삭제 처리
+        return ResponseEntity.ok(new BaseResponse<>(200, "회원 탈퇴 성공", "회원 탈퇴가 완료되었습니다."));
+    }
+
 }

@@ -13,4 +13,7 @@ public interface UserService {
 
     UserInfoResponse getUserInfo(String userId);
 
+    boolean withdrawUser(String userId);
+
+
 }

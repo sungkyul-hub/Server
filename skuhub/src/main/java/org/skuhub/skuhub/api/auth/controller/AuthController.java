@@ -18,7 +18,6 @@ import org.skuhub.skuhub.exceptions.CustomException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.mail.MessagingException;
-import org.skuhub.skuhub.api.user.service.UserServiceImpl;
 import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @Slf4j

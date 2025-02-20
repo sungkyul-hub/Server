@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.LocalDateTime;
+
 
 @Service
 @RequiredArgsConstructor
@@ -71,5 +73,15 @@ public class UserServiceImpl implements UserService {
         return new UserInfoResponse(user.getDepartment(), user.getYear(), user.getName());
     }
 
+    @Transactional
+    @Override
+    public boolean withdrawUser(String userId) {
+        UserInfoJpaEntity user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+        userRepository.delete(user);
+
+        return true;
+    }
 
 }
