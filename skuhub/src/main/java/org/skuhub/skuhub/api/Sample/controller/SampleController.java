@@ -76,6 +76,7 @@ public class SampleController {
 
         return new BaseResponse<>(true, "200", "샘플 호출 성공", OffsetDateTime.now(), responseList);
     }
+    //test
 }
 
 
