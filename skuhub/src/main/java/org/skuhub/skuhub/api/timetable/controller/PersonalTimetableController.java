@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/timetable/user")
+@RequestMapping("/api/v1/timetable")
 @RequiredArgsConstructor
 public class PersonalTimetableController {
 
@@ -22,7 +22,7 @@ public class PersonalTimetableController {
      * @param userKey 사용자 고유 키 (쿼리 파라미터)
      * @return 개인 시간표 목록
      */
-    @GetMapping("/time")
+    @GetMapping("/user/time")
     public ResponseEntity<BaseResponse<List<PersonalTimetableResponse>>> getUserTimetable(
             @RequestParam("user_key") Integer userKey) {
 

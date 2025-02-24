@@ -8,7 +8,7 @@ import org.skuhub.skuhub.api.timetable.dto.response.UserTimetableResponse;
 import org.skuhub.skuhub.model.timetable.UserTimetableEntity;
 import org.skuhub.skuhub.repository.timetable.UserTimetableRepository;
 import org.springframework.stereotype.Service;
-
+import org.skuhub.skuhub.api.timetable.dto.request.UpdateScoreRequest;
 
 
 import java.time.Instant;
@@ -92,6 +92,11 @@ public class UserTimetableService {
         return true;
     }
 
+    /**
+     * 사용자 시간표 삭제
+     * @param personalKey
+     * @return
+     */
     @Transactional
     public boolean deleteUserTimetable(Integer personalKey) {
         Optional<UserTimetableEntity> timetableOptional = userTimetableRepository.findById(personalKey);
@@ -104,5 +109,52 @@ public class UserTimetableService {
         return true;
     }
 
+    /**
+     * 사용자 성적 입력
+     */
+    @Transactional
+    public boolean addScoreToUserTimetable(Integer personalKey, String score, Integer majorStatus) {
+        Optional<UserTimetableEntity> timetableOptional = userTimetableRepository.findById(personalKey);
 
+        if (timetableOptional.isEmpty()) {
+            return false; // 404: 시간표가 존재하지 않음
+        }
+
+        UserTimetableEntity timetable = timetableOptional.get();
+
+        // 성적과 전공 여부 업데이트
+        if (score != null) {
+            timetable.setScore(score);
+        }
+        if (majorStatus != null) {
+            timetable.setMajorStatus(majorStatus);
+        }
+
+        userTimetableRepository.save(timetable);
+        return true;
+    }
+
+    /**
+     * 성적 수정 메서드
+     */
+    @Transactional
+    public boolean updateUserScore(UpdateScoreRequest request) {
+        Optional<UserTimetableEntity> timetableOptional =
+                userTimetableRepository.findById(request.getPersonalKey());
+
+        if (timetableOptional.isEmpty()) {
+            return false; // 404: 시간표가 존재하지 않음
+        }
+
+        UserTimetableEntity timetable = timetableOptional.get();
+
+        // 성적 업데이트
+        timetable.setScore(request.getScore());
+        if (request.getMajorStatus() != null) {
+            timetable.setMajorStatus(request.getMajorStatus());
+        }
+
+        userTimetableRepository.save(timetable);
+        return true;
+    }
 }

@@ -11,13 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.skuhub.skuhub.api.timetable.dto.request.DeleteUserTimetableRequest;
-
+import org.skuhub.skuhub.api.timetable.dto.request.ScoreRequest;
+import org.skuhub.skuhub.api.timetable.dto.request.UpdateScoreRequest;
 
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/timetable/user")
+@RequestMapping("/api/v1/timetable/")
 @RequiredArgsConstructor
 public class UserTimetableController {
 
@@ -27,7 +28,7 @@ public class UserTimetableController {
     /**
      * 사용자 시간표 등록 API
      */
-    @PostMapping("/post")
+    @PostMapping("user/post")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<BaseResponse<?>> createUserTimetable(@RequestBody UserTimetableRequest request) {
         userTimetableService.createUserTimetable(request);
@@ -56,7 +57,7 @@ public class UserTimetableController {
     /**
      * 사용자 시간표 수정 API
      */
-    @PostMapping("/edit")
+    @PostMapping("/user/edit")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<BaseResponse<?>> editUserTimetable(@RequestBody UpdateUserTimetableRequest request) {
         if (request.getPersonalKey() == null) {
@@ -81,7 +82,7 @@ public class UserTimetableController {
     /**
      * 사용자 시간표 삭제 API
      */
-    @DeleteMapping("/delete")
+    @DeleteMapping("/user/delete")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<BaseResponse<?>> deleteUserTimetable(@RequestBody DeleteUserTimetableRequest request) {
         if (request.getPersonalKey() == null) {
@@ -103,8 +104,50 @@ public class UserTimetableController {
         );
     }
 
+    /**
+     * 사용자 성적 입력 API
+     */
+    @PostMapping("/score/post")
+    @PreAuthorize("hasAuthority('USER')")
+    public ResponseEntity<BaseResponse<?>> addScore(@RequestBody ScoreRequest request) {
+        boolean isUpdated = userTimetableService.addScoreToUserTimetable(
+                request.getPersonalKey(),
+                request.getScore(),
+                request.getMajorStatus()
+        );
 
+        if (!isUpdated) {
+            return ResponseEntity.status(404).body(
+                    new BaseResponse<>(404, "시간표를 찾을 수 없습니다.", null, false)
+            );
+        }
 
+        return ResponseEntity.ok(
+                new BaseResponse<>(201, "성적을 성공적으로 입력했습니다.", request.getPersonalKey(), true)
+        );
+    }
 
+    /**
+     * 성적 수정 API
+     */
+    @PostMapping("/score/edit")
+    @PreAuthorize("hasAuthority('USER')") // JWT 인증 필요
+    public ResponseEntity<BaseResponse<?>> editScore(@RequestBody UpdateScoreRequest request) {
+        if (request.getPersonalKey() == null || request.getScore() == null) {
+            return ResponseEntity.status(400).body(
+                    new BaseResponse<>(400, "필수 값이 입력되지 않았습니다.", null, false)
+            );
+        }
 
+        boolean isUpdated = userTimetableService.updateUserScore(request);
+        if (!isUpdated) {
+            return ResponseEntity.status(404).body(
+                    new BaseResponse<>(404, "시간표를 찾을 수 없습니다.", null, false)
+            );
+        }
+
+        return ResponseEntity.ok(
+                new BaseResponse<>(201, "성적을 성공적으로 수정했습니다.", request.getPersonalKey(), true)
+        );
+    }
 }
