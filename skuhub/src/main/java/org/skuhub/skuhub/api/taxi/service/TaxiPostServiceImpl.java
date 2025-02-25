@@ -64,6 +64,8 @@ public class TaxiPostServiceImpl implements TaxiPostService {
     entity.setNumberOfPeople(request.getNumberOfPeople());
     entity.setRideTime(request.getRideTime());
     entity.setDescription(request.getDescription());
+    entity.setCreatedAt(LocalDateTime.now());
+    entity.setUpdatedAt(LocalDateTime.now());
 
     try {
         TaxiShareJpaEntity saved = taxiShareRepository.save(entity);

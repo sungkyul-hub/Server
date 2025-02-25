@@ -64,12 +64,12 @@ public class TaxiShareJpaEntity {
     private LocalDateTime updatedAt;
 
 
-    @PrePersist
-    protected void onCreate() {
-        LocalDateTime now = LocalDateTime.now();
-        this.createdAt = now;
-        this.updatedAt = now;
-    }
+//    @PrePersist
+//    protected void onCreate() {
+//        LocalDateTime now = LocalDateTime.now();
+//        this.createdAt = now;
+//        this.updatedAt = now;
+//    }
 
     @OneToMany(mappedBy = "postId")
     private Set<TaxiCommentJpaEntity> commentTbs = new LinkedHashSet<>();
