@@ -120,32 +120,32 @@ public class TaxiPostServiceImpl implements TaxiPostService {
 
         if(!postEntity.getUserKey().getUserId().equals(userId)) {
             throw new CustomException(ErrorCode.Forbidden, "수정 권한이 없습니다.", HttpStatus.FORBIDDEN);
-        }
-
-        TaxiShareJpaEntity entity = new TaxiShareJpaEntity();
-        entity.setUserKey(userEntity);
-        entity.setTitle(request.getTitle());
-        entity.setDepartureLocation(request.getDepartureLocation());
-        entity.setNumberOfPeople(request.getNumberOfPeople());
-        entity.setRideTime(request.getRideTime());
-        entity.setDescription(request.getDescription());
-        entity.setUpdatedAt(LocalDateTime.now());
-
-        try {
-            TaxiShareJpaEntity saved = taxiShareRepository.save(entity);
-            return new BaseResponse<>(true, "200", "택시합승 게시글 수정 성공", OffsetDateTime.now(), "게시글 수정 성공");
-        } catch (Exception e) {
-            return new BaseResponse<>(false, "500", "게시글 수정 실패", OffsetDateTime.now(), e.getMessage());
+        }else{
+            TaxiShareJpaEntity entity = new TaxiShareJpaEntity();
+            entity.setUserKey(userEntity);
+            entity.setTitle(request.getTitle());
+            entity.setDepartureLocation(request.getDepartureLocation());
+            entity.setNumberOfPeople(request.getNumberOfPeople());
+            entity.setRideTime(request.getRideTime());
+            entity.setDescription(request.getDescription());
+            entity.setUpdatedAt(LocalDateTime.now());
+            entity.setCreatedAt(postEntity.getCreatedAt());
+            try {
+                TaxiShareJpaEntity saved = taxiShareRepository.save(entity);
+                return new BaseResponse<>(true, "200", "택시합승 게시글 수정 성공", OffsetDateTime.now(), "게시글 수정 성공");
+            } catch (Exception e) {
+                return new BaseResponse<>(false, "500", "게시글 수정 실패", OffsetDateTime.now(), e.getMessage());
+            }
         }
     }
 
     public BaseResponse<String> deleteTaxiShare(TaxiPostDeleteRequest request, String userId) {
 
         UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("사용자가 존재하지 않습니다."));
 
         TaxiShareJpaEntity postEntity = taxiShareRepository.findById(request.getPostId())
-                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+                .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
 
         if(postEntity.getUserKey() == null) {
             throw new CustomException(ErrorCode.NotFound, "게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);

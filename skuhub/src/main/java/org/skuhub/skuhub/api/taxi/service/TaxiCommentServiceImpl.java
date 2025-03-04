@@ -91,6 +91,8 @@ public class TaxiCommentServiceImpl implements TaxiCommentService{
 
     @Override
     public BaseResponse<String> editTaxiComment(TaxiCommentEditRequest request, String userId) {
+        TaxiShareJpaEntity post = taxiShareRepository.findById(request.getPostId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         TaxiCommentJpaEntity comment = taxiCommentRepository.findById(request.getCommentId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         if(comment.getUserKey().getUserId().equals(userId)) {
@@ -104,6 +106,8 @@ public class TaxiCommentServiceImpl implements TaxiCommentService{
 
     @Override
     public BaseResponse<String> deleteTaxiComment(TaxiCommentDeleteRequest request, String userId) {
+        TaxiShareJpaEntity post = taxiShareRepository.findById(request.getPostId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         TaxiCommentJpaEntity comment = taxiCommentRepository.findById(request.getCommentId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         log.info("게시글 ID: {}", request.getPostId());

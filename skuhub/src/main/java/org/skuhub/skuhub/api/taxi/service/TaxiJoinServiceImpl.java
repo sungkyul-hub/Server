@@ -42,12 +42,11 @@ public class TaxiJoinServiceImpl implements TaxiJoinService{
         TaxiJoinJpaEntity taxiJoin = new TaxiJoinJpaEntity();
         // 최근 30분 이내 참여 여부 확인
         LocalDateTime thirtyMinutesAgo = LocalDateTime.now().minusMinutes(30);
-        Optional<TaxiJoinJpaEntity> optionalJoin = taxiJoinRepository.findByPostIdAndUserKey(shareEntity, userEntity);
-
-        if (optionalJoin.isPresent()) {
-            taxiJoin = optionalJoin.get();
+        Optional<TaxiJoinJpaEntity> joinPost = taxiJoinRepository.findByUserKey(userEntity);
+        if (joinPost.isPresent()) {
+            taxiJoin = joinPost.get();
             if (taxiJoin.getCreatedAt().isAfter(thirtyMinutesAgo)) {
-                return new BaseResponse<>(false, "400", "최근 30분 이내에 참여한 게시글입니다.", OffsetDateTime.now(), "참여 불가");
+                return new BaseResponse<>(false, "400", "최근 30분 이내에 참여한 게시글 있습니다.", OffsetDateTime.now(), "참여 불가");
             }
         }
         if(shareEntity.getHeadCount() < shareEntity.getNumberOfPeople()) {
