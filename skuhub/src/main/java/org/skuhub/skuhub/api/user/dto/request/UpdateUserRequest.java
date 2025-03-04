@@ -8,8 +8,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 
-public class UpdateUserRequest {
-    private String newPassword;      // 새 비밀번호
+public class UpdateUserRequest { // 새 비밀번호
     private String department;       // 새 학과 이름
     private String name;
 }

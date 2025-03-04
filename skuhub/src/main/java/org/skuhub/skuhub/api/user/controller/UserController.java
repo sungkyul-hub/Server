@@ -48,13 +48,15 @@ public class UserController {
         return new BaseResponse<>(HttpStatus.OK.value(), "성공적으로 유저 아이디를 찾았습니다.", userId);
     }
 
-    @Operation(summary = "사용자 정보 변경", description = "학과, 비밀번호, 닉네임를 변경하는 API")
+    @Operation(summary = "사용자 정보 변경", description = "학과, 비밀번호, 닉네임을 변경하는 API")
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/profile/modify/")
-    public BaseResponse<UpdatedUserInfoResponse> updateUser(@RequestParam String userId, @RequestBody UpdateUserRequest request) {
+    @PostMapping("/profile/modify")
+    public ResponseEntity<BaseResponse<UpdatedUserInfoResponse>> updateUser(HttpServletRequest request, @RequestBody UpdateUserRequest updateUserRequest) {
+        String userId = jwtUtil.getUserId(request);
+
         try {
-            UpdatedUserInfoResponse updatedUserInfoResponse = userService.updateUserInfo(userId, request);
-            return new BaseResponse<>(HttpStatus.OK.value(), "사용자 정보가 성공적으로 변경되었습니다.", updatedUserInfoResponse);
+            UpdatedUserInfoResponse updatedUserInfoResponse = userService.updateUserInfo(userId, updateUserRequest);
+            return ResponseEntity.ok(new BaseResponse<>(HttpStatus.OK.value(), "사용자 정보가 성공적으로 변경되었습니다.", updatedUserInfoResponse));
         } catch (IllegalArgumentException e) {
             throw new CustomException(ErrorCode.NotFound, e.getMessage(), HttpStatus.NOT_FOUND);
         }

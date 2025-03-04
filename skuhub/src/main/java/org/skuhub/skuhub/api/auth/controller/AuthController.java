@@ -18,6 +18,10 @@ import org.skuhub.skuhub.exceptions.CustomException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.mail.MessagingException;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @Slf4j
@@ -39,9 +43,10 @@ public class AuthController {
         BaseResponse<JwtDto> response = new BaseResponse<>(jwtDto);
         response.setCode("201");
         response.setMessage("회원가입 성공");
-
+        response.setSuccess(true); // success 필드를 true로 설정
         return response;
     }
+
 
     @Operation(summary = "로그인(일반)", description = "일반 로그인 API")
     @ResponseStatus(HttpStatus.OK)
@@ -50,6 +55,7 @@ public class AuthController {
         BaseResponse<JwtDto> response = new BaseResponse<>(authService.login(request));
         response.setCode("200");
         response.setMessage("로그인 성공");
+        response.setSuccess(true);
 
         return response;
     }
@@ -59,7 +65,7 @@ public class AuthController {
     @PostMapping("/send-email-verification")
     public BaseResponse<String> sendVerificationCode(@RequestParam String email) {
         if (!email.endsWith("@sungkyul.ac.kr")) {
-            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "유효하지 않은 이메일 도메인입니다.", "유효하지 않은 이메일 도메인입니다.");
+            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "유효하지 않은 이메일 도메인입니다.", "유효하지 않은 이메일 도메인입니다.",false);
         }
 
         try {
@@ -67,7 +73,7 @@ public class AuthController {
             return new BaseResponse<>(HttpStatus.OK.value(), "메일 발송 성공", authCode);
         } catch (MessagingException e) {
             log.error("메일 발송 오류: {}", e.getMessage(), e);
-            return new BaseResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "메일 발송 실패", "메일 발송 실패");
+            return new BaseResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "메일 발송 실패", "메일 발송 실패",false);
         }
     }
 
@@ -77,22 +83,22 @@ public class AuthController {
     public BaseResponse<String> sendPasswordResetVerificationCode(@RequestParam String email, @RequestParam String userId) {
         // 이메일 도메인 검사
         if (!email.endsWith("@sungkyul.ac.kr")) {
-            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "유효하지 않은 이메일 도메인입니다.", "유효하지 않은 이메일 도메인입니다.");
+            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "유효하지 않은 이메일 도메인입니다.", "유효하지 않은 이메일 도메인입니다.",false);
         }
 
         try {
             // 유저 아이디 검사 (예시: DB에서 유저 아이디 존재 여부 확인)
             boolean isUserValid = userService.isUserValid(userId); // 유저 아이디가 유효한지 체크하는 서비스 메서드 호출
             if (!isUserValid) {
-                return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "아이디가 올바르지 않습니다.", "유효하지 않은 유저 아이디입니다.");
+                return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "아이디가 올바르지 않습니다.", "유효하지 않은 유저 아이디입니다.",false);
             }
 
             // 이메일과 유저아이디 검증 후 비밀번호 변경 인증번호 발송
             String authCode = mailService.sendPasswordResetEmail(email); // 비밀번호 변경 인증번호 발송
-            return new BaseResponse<>(HttpStatus.OK.value(), "메일 발송 성공", authCode);
+            return new BaseResponse<>(HttpStatus.OK.value(), "메일 발송 성공", authCode,true);
         } catch (MessagingException e) {
             log.error("메일 발송 오류: {}", e.getMessage(), e);
-            return new BaseResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "메일 발송 실패", "메일 발송 실패");
+            return new BaseResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "메일 발송 실패", "메일 발송 실패",false);
         } catch (CustomException e) {
             // 유저 아이디가 유효하지 않을 경우 예외 처리
             return new BaseResponse<>(e.getStatus().value(), e.getMessage(), e.getMessage());
@@ -105,10 +111,10 @@ public class AuthController {
     public BaseResponse<String> verifyEmailCode(@RequestParam String email, @RequestParam String code) {
         if (mailService.verifyCode(email, code)) {
             // 인증 성공 시
-            return new BaseResponse<String>(HttpStatus.OK.value(),"인증에 성공하였습니다.", "인증에 성공하였습니다.");
+            return new BaseResponse<String>(HttpStatus.OK.value(),"인증에 성공하였습니다.", "인증에 성공하였습니다.",true);
         } else {
             // 인증 실패 시
-            return new BaseResponse<String>(HttpStatus.BAD_REQUEST.value(), "인증에 실패하였습니다.", "인증에 실패하였습니다.");
+            return new BaseResponse<String>(HttpStatus.BAD_REQUEST.value(), "인증에 실패하였습니다.", "인증에 실패하였습니다.",false);
         }
     }
 
@@ -117,9 +123,9 @@ public class AuthController {
     @PostMapping("/find-password/verify-email")
     public BaseResponse<String> verifyPasswordResetCode(@RequestParam String email, @RequestParam String code) {
         if (mailService.verifyCode(email, code)) {
-            return new BaseResponse<>(HttpStatus.OK.value(), "비밀번호 변경 인증에 성공하였습니다.", "비밀번호 변경 인증에 성공하였습니다.");
+            return new BaseResponse<>(HttpStatus.OK.value(), "비밀번호 변경 인증에 성공하였습니다.", "비밀번호 변경 인증에 성공하였습니다.",true);
         } else {
-            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "비밀번호 변경 인증에 실패하였습니다.", "비밀번호 변경 인증에 실패하였습니다.");
+            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "비밀번호 변경 인증에 실패하였습니다.", "비밀번호 변경 인증에 실패하였습니다.",false);
         }
     }
 
@@ -129,9 +135,9 @@ public class AuthController {
     public BaseResponse<String> changePassword(@RequestBody ChangePasswordRequest request) {
         try {
             authService.changePassword(request); // 비밀번호 변경 서비스 호출
-            return new BaseResponse<>(HttpStatus.OK.value(), "비밀번호 변경에 성공하였습니다.", "비밀번호 변경에 성공하였습니다.");
+            return new BaseResponse<>(HttpStatus.OK.value(), "비밀번호 변경에 성공하였습니다.", "비밀번호 변경에 성공하였습니다.",true);
         } catch (Exception e) {
-            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "비밀번호 변경에 실패하였습니다.", e.getMessage());
+            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "비밀번호 변경에 실패하였습니다.", e.getMessage(),false);
         }
     }
 
@@ -168,7 +174,9 @@ public class AuthController {
         BaseResponse<Boolean> response = new BaseResponse<>(isAvailable);
         response.setCode("200");
         response.setMessage(isAvailable ? "사용 가능한 아이디입니다." : "이미 사용 중인 아이디입니다.");
+        response.setSuccess(true);
         return response;
+
     }
 
     @Operation(summary = "비밀번호 일치 여부 확인", description = "사용자가 입력한 비밀번호가 일치하는지 확인하는 API")
@@ -177,9 +185,9 @@ public class AuthController {
     public BaseResponse<String> verifyPassword(@RequestParam String userId, @RequestParam String password) {
         boolean isValid = authService.isPasswordValid(userId, password);
         if (isValid) {
-            return new BaseResponse<>(HttpStatus.OK.value(), "비밀번호가 일치합니다.", "비밀번호가 일치합니다.");
+            return new BaseResponse<>(HttpStatus.OK.value(), "비밀번호가 일치합니다.", "비밀번호가 일치합니다.",true);
         } else {
-            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다.", "비밀번호가 일치하지 않습니다.");
+            return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다.", "비밀번호가 일치하지 않습니다.",false);
         }
     }
 
