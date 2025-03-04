@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="JpaBuddyIdeaProjectConfig">
+  <component name="JpaBuddyIdeaProjectConfig" migrateDefaultValues="false">
+    <option name="migrateDefaultValues" value="false" />
     <option name="reverseEngineeringLastDbConnectionId" value="1a4b5ad2-56de-4b07-8749-a384d891bf0c" />
   </component>
 </project>

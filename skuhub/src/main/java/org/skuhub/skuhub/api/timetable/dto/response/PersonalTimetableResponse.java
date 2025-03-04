@@ -30,7 +30,7 @@ public class PersonalTimetableResponse {
                 .timetableId(entity.getTimetableId())
                 .personalGrade(entity.getPersonalGrade())
                 .personalSemester(entity.getPersonalSemester())
-                .createdAt(entity.getCreatedAt())
+                .createdAt(entity.getCreatedAt().toInstant())
                 .score(entity.getScore())
                 .majorStatus(entity.getMajorStatus())
                 .build();

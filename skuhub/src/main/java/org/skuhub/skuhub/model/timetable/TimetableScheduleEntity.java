@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.time.Instant;
+import org.skuhub.skuhub.model.BaseTime;
 
 @Entity
 @Table(name = "TIMETABLE_TB")
@@ -14,7 +13,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TimetableScheduleEntity {
+public class TimetableScheduleEntity extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -78,9 +77,4 @@ public class TimetableScheduleEntity {
     @Size(max = 10)
     @Column(name = "general_area", length = 10)
     private String generalArea;
-
-    @NotNull
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
-
 }

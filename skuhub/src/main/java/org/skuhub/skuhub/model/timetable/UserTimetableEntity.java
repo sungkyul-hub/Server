@@ -2,8 +2,7 @@ package org.skuhub.skuhub.model.timetable;
 
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.Instant;
+import org.skuhub.skuhub.model.BaseTime;
 
 @Entity
 @Table(name = "PERSONAL_TIMETABLE_TB")
@@ -12,7 +11,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserTimetableEntity {
+public class UserTimetableEntity extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,8 +30,7 @@ public class UserTimetableEntity {
     @Column(name = "personal_semester", nullable = false)
     private String personalSemester;
 
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    // createdAt과 updatedAt은 BaseTime에서 관리
 
     @Column(name = "score")
     private String score;

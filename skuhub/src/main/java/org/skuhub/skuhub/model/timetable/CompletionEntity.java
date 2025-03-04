@@ -3,9 +3,9 @@ package org.skuhub.skuhub.model.timetable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.skuhub.skuhub.model.BaseTime;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 
 @Entity
 @Table(name = "CREDIT_CATEGORY_TB")
@@ -14,8 +14,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CompletionEntity {
-
+public class CompletionEntity extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,10 +53,6 @@ public class CompletionEntity {
     @Column(name = "other")
     private Integer other;
 
-    @NotNull
-    @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt;
-
     @Column(name = "earned_credits")
     private Integer earnedCredits;
 
@@ -66,5 +61,4 @@ public class CompletionEntity {
 
     @Column(name = "graduation_credits")
     private Integer graduationCredits;
-
 }

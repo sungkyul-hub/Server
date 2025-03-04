@@ -6,11 +6,9 @@ import org.skuhub.skuhub.model.timetable.TimetableScheduleEntity;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@AllArgsConstructor
 public class TimetableScheduleResponse {
-
     private Integer id;
     private Integer year;
     private Integer semester;
@@ -28,22 +26,23 @@ public class TimetableScheduleResponse {
     private Instant createdAt;
 
     public static TimetableScheduleResponse fromEntity(TimetableScheduleEntity entity) {
-        return TimetableScheduleResponse.builder()
-                .id(entity.getId())
-                .year(entity.getYear())
-                .semester(entity.getSemester())
-                .department(entity.getDepartment())
-                .grade(entity.getGrade())
-                .completionType(entity.getCompletionType())
-                .subjectCode(entity.getSubjectCode())
-                .classNumber(entity.getClassNumber())
-                .subjectName(entity.getSubjectName())
-                .credit(entity.getCredit())
-                .professorName(entity.getProfessorName())
-                .classTime(entity.getClassTime())
-                .classroom(entity.getClassroom())
-                .generalArea(entity.getGeneralArea())
-                .createdAt(entity.getCreatedAt())
-                .build();
+        return new TimetableScheduleResponse(
+                entity.getId(),
+                entity.getYear(),
+                entity.getSemester(),
+                entity.getDepartment(),
+                entity.getGrade(),
+                entity.getCompletionType(),
+                entity.getSubjectCode(),
+                entity.getClassNumber(),
+                entity.getSubjectName(),
+                entity.getCredit(),
+                entity.getProfessorName(),
+                entity.getClassTime(),
+                entity.getClassroom(),
+                entity.getGeneralArea(),
+                entity.getCreatedAt().toInstant()
+        );
     }
 }
+
