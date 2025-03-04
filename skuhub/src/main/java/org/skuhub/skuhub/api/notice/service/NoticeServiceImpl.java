@@ -34,7 +34,7 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public BaseResponse<List<NoticeResponse>> searchNotice(String keyword, Long cursor, int limit) {
         List<NoticeJpaEntity> lastNoticeId = noticeRepository.findLastNoticeId();
-        long cursorValue = cursor != null ? cursor : lastNoticeId.get(0).getId() + 1;
+        long cursorValue = cursor != null ? cursor : lastNoticeId.getFirst().getId() + 1;
         Pageable pageable = PageRequest.of(0, limit); // 첫 페이지 요청
         List<NoticeJpaEntity> noticeList = noticeRepository.findByTitleWithCursor(keyword, cursorValue, pageable);
         List<NoticeResponse> cursorList = noticeList.stream().map(notice -> {
