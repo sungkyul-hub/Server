@@ -105,14 +105,13 @@ public class FirebaseUtil {
                                 .image(null)
                                 .build())
                         )
-                        .data(
-                                FcmMessageDto.Data.builder()
-                                        .title(String.valueOf(request.getPushType()))
-                                        .body(request.getContent())
-                                        .link(request.getMoveToId())
-                                        .build()
-                        ).build())
-                .validateOnly(false).build();
+                        .data(FcmMessageDto.Data.builder()
+                                .title(String.valueOf(request.getPushType()))
+                                .body(request.getContent())
+                                .link(request.getMoveToId())
+                                .build()
+                        )
+                        .build()).validateOnly(false).build();
 
         return objectMapper.writeValueAsString(fcmMessageDto);
     }

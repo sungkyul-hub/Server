@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.skuhub.skuhub.common.response.BaseResponse;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -28,7 +29,7 @@ public class TaxiCommentController {
     @Operation(summary = "댓글 작성", description = "택시합승 게시글에 댓글을 작성하는 API")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("")
-    public BaseResponse<String> postTaxiComment(@RequestBody TaxiCommentRequest taxiCommentRequest, HttpServletRequest request) {
+    public BaseResponse<String> postTaxiComment(@RequestBody TaxiCommentRequest taxiCommentRequest, HttpServletRequest request) throws IOException {
         String userId = jwtUtil.getUserId(request);
         return taxiCommentServiceImpl.postTaxiComment(taxiCommentRequest, userId);
     }
