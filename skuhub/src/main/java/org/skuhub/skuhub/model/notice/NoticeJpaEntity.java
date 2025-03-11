@@ -3,8 +3,7 @@ package org.skuhub.skuhub.model.notice;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.skuhub.skuhub.model.user.UserInfoJpaEntity;
 
 import java.time.Instant;
@@ -17,6 +16,9 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "NOTICE_TB")
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NoticeJpaEntity {
 
     @Id

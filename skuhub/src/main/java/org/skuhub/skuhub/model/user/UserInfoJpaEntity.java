@@ -1,7 +1,9 @@
 package org.skuhub.skuhub.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.api.client.auth.oauth2.TokenRequest;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -44,6 +46,11 @@ public class UserInfoJpaEntity {
         @Column(name = "name", nullable = false, length = 20)
         private String name;
 
+        @Setter
+        @Size(max = 255)
+        @Column(name = "Access_token")
+        private String accessToken;
+
         @CreationTimestamp
         @Column(name = "created_at", nullable = false, updatable = false)
         private LocalDateTime createdAt;
@@ -66,5 +73,6 @@ public class UserInfoJpaEntity {
         @Setter
         @OneToMany(mappedBy = "userKey")
         private Set<TaxiShareJpaEntity> taxiShareTbs = new LinkedHashSet<>();
+
 
 }

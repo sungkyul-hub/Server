@@ -31,4 +31,6 @@ public interface NoticeRepository extends JpaRepository<NoticeJpaEntity, Long> {
 
     @Query("SELECT n FROM NoticeJpaEntity n  ORDER BY n.noticeModifyDate DESC ")
     List<NoticeJpaEntity> findLastNoticeId();
+
+    boolean existsByTitle(String title);
 }
