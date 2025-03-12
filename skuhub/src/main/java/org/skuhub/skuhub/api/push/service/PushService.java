@@ -12,9 +12,9 @@ public interface PushService {
 
     BaseResponse<String> deleteToken(String userId);
 
-    BaseResponse<String> pushKeywordAlarm();
+    boolean pushKeywordAlarm(Long postId, String notice) throws IOException;
 
-    BaseResponse<String> pushTaxiJoinAlarm(Long postId) throws IOException;
+    boolean pushTaxiJoinAlarm(Long postId) throws IOException;
 
     boolean pushTaxiCommentAlarm(Long postId, String content) throws IOException;
 }

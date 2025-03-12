@@ -75,4 +75,10 @@ public class UserInfoJpaEntity {
         private Set<TaxiShareJpaEntity> taxiShareTbs = new LinkedHashSet<>();
 
 
+        @OneToOne(mappedBy = "userKey")
+        private KeywordInfoJpaEntity keywordInfoTb;
+
+        public void setKeywordInfoTb(KeywordInfoJpaEntity keywordInfoTb) {
+                this.keywordInfoTb = keywordInfoTb;
+        }
 }
