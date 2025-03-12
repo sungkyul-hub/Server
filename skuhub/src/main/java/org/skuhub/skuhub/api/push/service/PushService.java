@@ -14,7 +14,7 @@ public interface PushService {
 
     BaseResponse<String> pushKeywordAlarm();
 
-    BaseResponse<String> pushTaxiJoinAlarm(Long postId);
+    BaseResponse<String> pushTaxiJoinAlarm(Long postId) throws IOException;
 
     boolean pushTaxiCommentAlarm(Long postId, String content) throws IOException;
 }

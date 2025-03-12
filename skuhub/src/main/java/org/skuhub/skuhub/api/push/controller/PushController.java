@@ -39,15 +39,17 @@ public class PushController {
         return pushService.deleteToken(userId);
     }
 
-    @Operation(summary = "키워드 알림 전송", description = "키워드 알림 전송하는 API")
-    public BaseResponse<String> pushKeywordAlarm() {
-        return null;
-    }
-
-    @Operation(summary = "택시 참가 전송", description = "택시 게시글에 모구 참여했을 때 전송하는 API")
-    public BaseResponse<String> pushTaxiJoinAlarm(Long postId) {
-        return null;
-    }
+//    @Operation(summary = "키워드 알림 전송", description = "키워드 알림 전송하는 API")
+//    public BaseResponse<String> pushKeywordAlarm() {
+//        return null;
+//    }
+//
+//    @Operation(summary = "택시 참가 전송", description = "택시 게시글에 모구 참여했을 때 전송하는 API")
+//    @ResponseStatus(HttpStatus.OK)
+//    @DeleteMapping("/taxi")
+//    public BaseResponse<String> pushTaxiJoinAlarm() {
+//        return pushService.pushTaxiJoinAlarm(46L);
+//    }
 
 //    @Operation(summary = "택시 게시글 댓글 전송", description = "택시 게시글에 댓글이 달렸을 때 전송하는 API")
 //    public boolean pushTaxiCommentAlarm(Long postId) throws IOException {

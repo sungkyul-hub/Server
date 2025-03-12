@@ -7,7 +7,6 @@ import lombok.*;
 import org.skuhub.skuhub.common.enums.alarm.PushType;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
 @ToString
 public class PushRequest {

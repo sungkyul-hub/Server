@@ -19,8 +19,10 @@ import org.skuhub.skuhub.repository.users.UserInfoRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.Objects;
 import java.util.Optional;
 @Getter
 @Service
@@ -39,7 +41,7 @@ public class TaxiJoinServiceImpl implements TaxiJoinService{
     }
 
     @Override
-    public BaseResponse<String> joinTaxiShare(TaxiJoinRequest request, String userId) {
+    public BaseResponse<String> joinTaxiShare(TaxiJoinRequest request, String userId) throws IOException {
         UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         TaxiShareJpaEntity shareEntity = taxiShareRepository.findById(request.getPostId())
@@ -57,6 +59,9 @@ public class TaxiJoinServiceImpl implements TaxiJoinService{
             return new BaseResponse<>(false, "400", "이미 참여한 게시글입니다.", OffsetDateTime.now(), "이미 참여한 게시글입니다.");
         }else if(shareEntity.getNumberOfPeople().equals(shareEntity.getHeadCount())){ // 인원 초과인 경우
             return new BaseResponse<>(false, "400", "인원 초과입니다.", OffsetDateTime.now(), "인원 초과입니다.");
+
+        }else if(Objects.equals(userId, shareEntity.getUserKey().getUserId())){ // 본인 게시글인 경우
+            return new BaseResponse<>(false, "400", "본인 게시글입니다.", OffsetDateTime.now(), "본인 게시글입니다.");
 
         }else if(shareEntity.getHeadCount() < shareEntity.getNumberOfPeople()) { // 참여 성공
             shareEntity.setHeadCount(shareEntity.getHeadCount() + 1);

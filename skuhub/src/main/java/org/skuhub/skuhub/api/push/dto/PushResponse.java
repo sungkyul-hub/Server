@@ -7,7 +7,6 @@ import org.skuhub.skuhub.common.enums.alarm.PushType;
 import java.time.OffsetDateTime;
 import java.util.List;
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
 @ToString
 public class PushResponse {
