@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 
 @Getter
@@ -69,22 +70,32 @@ public class PushServiceImpl implements PushService {
     }
 
     @Override
-    public boolean pushKeywordAlarm(Long postId, String notice) throws IOException {    //키워드 알림 전송
+    public boolean pushKeywordAlarm(Long postId, String notice) throws IOException {    // 키워드 알림 전송
         log.info("pushKeywordAlarm: notice: {}", notice);
         List<KeywordInfoJpaEntity> noticeList = keywordInfoRepository.findByKeyword(notice);
-        for (KeywordInfoJpaEntity keyword : noticeList) {
-            Long userKey = keyword.getUserKey().getUserKey();
-            UserInfoJpaEntity userEntity = userInfoRepository.findByUserKey(userKey)
-                    .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "사용자를 찾을 수 없습니다. userKey: " + userKey, HttpStatus.NOT_FOUND));
-            PushRequest.SendPushRequest sendPushRequest = PushRequest.SendPushRequest.builder()
-                    .userKey(userKey)
-                    .title("키워드 알림")
-                    .content(notice)
-                    .pushType(PushType.NOTICE)
-                    .moveToId("NOTICE" + postId)
-                    .build();
-            firebaseUtil.sendFcmTo(sendPushRequest, userEntity.getAccessToken());
-        }
+
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+            for (KeywordInfoJpaEntity keyword : noticeList) {
+                Long userKey = keyword.getUserKey().getUserKey();
+                UserInfoJpaEntity userEntity = userInfoRepository.findByUserKey(userKey)
+                        .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "사용자를 찾을 수 없습니다. userKey: " + userKey, HttpStatus.NOT_FOUND));
+
+                PushRequest.SendPushRequest sendPushRequest = PushRequest.SendPushRequest.builder()
+                        .userKey(userKey)
+                        .title("키워드 알림")
+                        .content(notice)
+                        .pushType(PushType.NOTICE)
+                        .moveToId("NOTICE" + postId)
+                        .build();
+
+                try {
+                    sendRetry(sendPushRequest, userEntity.getAccessToken(), userEntity);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
         return true;
     }
 
@@ -105,7 +116,7 @@ public class PushServiceImpl implements PushService {
                 .pushType(PushType.TAXI)
                 .moveToId("TAXI" + postId)
                 .build();
-        firebaseUtil.sendFcmTo(sendPushRequest, userEntity.getAccessToken());
+        sendRetry(sendPushRequest, userEntity.getAccessToken(), userEntity);
 
         List<TaxiJoinJpaEntity> joins = taxiJoinRepository.findByPostId(shareEntity);
         for (TaxiJoinJpaEntity join : joins) {
@@ -115,11 +126,17 @@ public class PushServiceImpl implements PushService {
             PushRequest.SendPushRequest sendJoinPushRequest = PushRequest.SendPushRequest.builder()
                     .userKey(userKey)
                     .title("택시 파티 성공")
-                    .content(userEntity.getUserId() + "님이 참가한 게시글에 모두 참여했습니다.")
+                    .content(joinUserEntity.getUserId() + "님이 참가한 게시글에 모두 참여했습니다.")
                     .pushType(PushType.TAXI)
                     .moveToId("TAXI" + postId)
                     .build();
-            firebaseUtil.sendFcmTo(sendJoinPushRequest, joinUserEntity.getAccessToken());
+            CompletableFuture.runAsync(() -> {
+                try {
+                    sendRetry(sendJoinPushRequest, joinUserEntity.getAccessToken(), joinUserEntity);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         }
         return true;
     }
@@ -133,10 +150,8 @@ public class PushServiceImpl implements PushService {
         TaxiShareJpaEntity shareEntity = taxiShareRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         Long userKey = shareEntity.getUserKey().getUserKey();
-        Optional<UserInfoJpaEntity> userEntity = userInfoRepository.findByUserKey(userKey);
-        if (userEntity.isEmpty()) {
-            throw new CustomException(ErrorCode.NotFound, "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
-        }
+        UserInfoJpaEntity userEntity = userInfoRepository.findByUserKey(userKey)
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "사용자를 찾을 수 없습니다. userKey: " + userKey, HttpStatus.NOT_FOUND));
         PushRequest.SendPushRequest sendPushRequest = PushRequest.SendPushRequest.builder()
                 .userKey(userKey)
                 .title("택시 게시글에 댓글이 달렸습니다.")
@@ -144,10 +159,31 @@ public class PushServiceImpl implements PushService {
                 .pushType(PushType.COMMENT)
                 .moveToId("TAXI" + postId)
                 .build();
-
-        return firebaseUtil.sendFcmTo(sendPushRequest, userEntity.get().getAccessToken());
+        sendRetry(sendPushRequest, userEntity.getAccessToken(), userEntity);
+        return true;
     }
 
+    private void sendRetry(PushRequest.SendPushRequest sendPushRequest, String token, UserInfoJpaEntity userEntity) throws IOException {
+        boolean success = false;
+        int retryCount = 0;
+        int maxRetries = 3; // 최대 재시도 횟수
 
-
+        while (!success && retryCount < maxRetries) {
+            try {
+                firebaseUtil.sendFcmTo(sendPushRequest, token);
+                success = true; // 전송 성공
+            } catch (IOException e) {
+                retryCount++;
+                log.error("FCM 전송 실패 (userKey: {}), 재시도 중... (시도 횟수: {})", userEntity.getUserKey(), retryCount);
+                if (retryCount >= maxRetries) {
+                    log.error("FCM 전송 실패 (userKey: {}) - 최대 재시도 횟수 초과", userEntity.getUserKey());
+                }
+                try {
+                    Thread.sleep(1000); // 1초 대기
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt(); // 스레드 인터럽트 처리
+                }
+            }
+        }
+    }
 }
