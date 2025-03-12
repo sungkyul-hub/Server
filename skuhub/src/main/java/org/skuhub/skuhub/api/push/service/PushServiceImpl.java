@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,8 +67,7 @@ public class PushServiceImpl implements PushService {
     }
 
     @Override
-    public boolean pushTaxiJoinAlarm(Long postId) throws IOException {
-        List<String> tokens = new ArrayList<>(); // 토큰 리스트 초기화
+    public BaseResponse<String> pushTaxiJoinAlarm(Long postId) throws IOException {
 
         TaxiShareJpaEntity shareEntity = taxiShareRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
@@ -99,9 +98,8 @@ public class PushServiceImpl implements PushService {
                     .moveToId("TAXI" + postId)
                     .build();
             firebaseUtil.sendFcmTo(sendJoinPushRequest, joinUserEntity.getAccessToken());
-            tokens.add(joinUserEntity.getAccessToken()); // 참여자 토큰 추가
         }
-        return true;
+        return new BaseResponse<>(true, "200", "택시 게시글 참여 성공 알림", null, "택시 게시글 참여 성공 알림");
 
     }
 
