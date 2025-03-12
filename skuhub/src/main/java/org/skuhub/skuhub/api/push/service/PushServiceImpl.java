@@ -80,7 +80,7 @@ public class PushServiceImpl implements PushService {
                 .userKey(userKey)
                 .title(userEntity.getUserId() + "님이 올린 게시글에 모두 참여했습니다.")
                 .content(userEntity.getUserId() + "님이 올린 게시글에 모두 참여했습니다.")
-                .pushType(PushType.COMMENT)
+                .pushType(PushType.TAXI)
                 .moveToId("TAXI" + postId)
                 .build();
         firebaseUtil.sendFcmTo(sendPushRequest, userEntity.getAccessToken());
@@ -94,7 +94,7 @@ public class PushServiceImpl implements PushService {
                     .userKey(userKey)
                     .title(userEntity.getUserId() + "님이 참가한 게시글에 모두 참여했습니다.")
                     .content(userEntity.getUserId() + "님이 참가한 게시글에 모두 참여했습니다.")
-                    .pushType(PushType.COMMENT)
+                    .pushType(PushType.TAXI)
                     .moveToId("TAXI" + postId)
                     .build();
             firebaseUtil.sendFcmTo(sendJoinPushRequest, joinUserEntity.getAccessToken());
