@@ -12,6 +12,8 @@ import org.skuhub.skuhub.common.utills.jwt.JWTUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/taxi/join")
@@ -23,7 +25,7 @@ public class TaxiJoinController {
     @Operation(summary = "택시합승 참여", description = "택시합승 게시글에 참여하는 API")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("")
-    public BaseResponse<String> joinTaxiShare(@RequestBody TaxiJoinRequest taxiJoinRequest, HttpServletRequest request) {
+    public BaseResponse<String> joinTaxiShare(@RequestBody TaxiJoinRequest taxiJoinRequest, HttpServletRequest request) throws IOException {
         String userId = jwtUtil.getUserId(request);
         return taxiJoinServiceImpl.joinTaxiShare(taxiJoinRequest, userId);
     }

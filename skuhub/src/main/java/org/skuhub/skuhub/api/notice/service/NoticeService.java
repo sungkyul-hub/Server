@@ -13,4 +13,6 @@ public interface NoticeService {
     public BaseResponse<List<NoticeResponse>> categoryNotice(String category, Long cursor, int limit);
 
     public BaseResponse<NoticeDetailsResponse> detailNotice(Long noticeId);
+
+    BaseResponse<List<NoticeResponse>> noticeHistory(String userId);
 }

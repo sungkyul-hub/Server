@@ -1,10 +1,12 @@
 package org.skuhub.skuhub.api.notice.controller;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.skuhub.skuhub.api.notice.dto.response.NoticeDetailsResponse;
 import org.skuhub.skuhub.api.notice.dto.response.NoticeResponse;
 import org.skuhub.skuhub.api.notice.service.NoticeServiceImpl;
+import org.skuhub.skuhub.common.utills.jwt.JWTUtil;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.List;
 @Slf4j
 public class NoticeController {
     private final NoticeServiceImpl noticeServiceImpl;
+    private final JWTUtil jwtUtil;
 
     @Operation(summary = "공지사항 검색", description = "공지사항을 검색하는 API")
     @ResponseStatus(HttpStatus.OK)
@@ -49,5 +52,13 @@ public class NoticeController {
     public BaseResponse<NoticeDetailsResponse> detailNotice(@PathVariable Long noticeId) {
         log.info("noticeId: {}", noticeId);
         return noticeServiceImpl.detailNotice(noticeId);
+    }
+
+    @Operation(summary = "공지 히스토리", description = "공지 히스토리 보는 API")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/history")
+    public BaseResponse<List<NoticeResponse>> noticeHistory(HttpServletRequest request) {
+        String userId = jwtUtil.getUserId(request);
+        return noticeServiceImpl.noticeHistory(userId);
     }
 }

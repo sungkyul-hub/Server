@@ -24,7 +24,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class KeywordInfoJpaEntity {
-    @Id
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_key")
     private UserInfoJpaEntity userKey;
@@ -36,5 +36,9 @@ public class KeywordInfoJpaEntity {
     @NotNull
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @Id
+    @Column(name = "keyword_id", nullable = false)
+    private Long id;
 
 }

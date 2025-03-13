@@ -76,17 +76,13 @@ public class UserInfoJpaEntity {
         private Set<TaxiShareJpaEntity> taxiShareTbs = new LinkedHashSet<>();
 
 
-        @OneToOne(mappedBy = "userKey")
-        private KeywordInfoJpaEntity keywordInfoTb;
 
+        @Setter
         @OneToMany(mappedBy = "userKey")
         private Set<NotificationHistoryJpaEntity> notificationHistories = new LinkedHashSet<>();
 
-        public void setNotificationHistories(Set<NotificationHistoryJpaEntity> notificationHistories) {
-                this.notificationHistories = notificationHistories;
-        }
+        @Setter
+        @OneToOne(mappedBy = "userKey")
+        private KeywordInfoJpaEntity keywordInfoTb;
 
-        public void setKeywordInfoTb(KeywordInfoJpaEntity keywordInfoTb) {
-                this.keywordInfoTb = keywordInfoTb;
-        }
 }
