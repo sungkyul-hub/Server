@@ -20,9 +20,9 @@ import java.util.Set;
 @Entity
 @Table(name = "KEYWORD_INFO_TB")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class KeywordInfoJpaEntity {
     @Id
     @OneToOne(fetch = FetchType.LAZY)
@@ -35,6 +35,6 @@ public class KeywordInfoJpaEntity {
 
     @NotNull
     @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
 }

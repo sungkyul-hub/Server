@@ -22,6 +22,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -73,14 +75,23 @@ public class PushServiceImpl implements PushService {
     public BaseResponse<String> saveKeyword(String userId, String Keyword) {
         UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
-        return null;
+        KeywordInfoJpaEntity keywordEntity = new KeywordInfoJpaEntity();
+        keywordEntity.setUserKey(userEntity);
+        keywordEntity.setKeyword(Keyword);
+        keywordEntity.setCreatedAt(LocalDateTime.now());
+        keywordInfoRepository.save(keywordEntity);
+        return new BaseResponse<>(true, "201", "키워드 저장 성공", OffsetDateTime.now(), "키워드 저장 성공");
     }
 
     @Override
     public BaseResponse<String> deleteKeyword(String userId, String Keyword) {
         UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
-        return null;
+        KeywordInfoJpaEntity keywordEntity = keywordInfoRepository.findByUserKeyAndKeyword(userEntity.getUserKey(), Keyword)
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "키워드를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+        keywordInfoRepository.delete(keywordEntity);
+        return new BaseResponse<>(true, "200", "키워드 삭제 성공", OffsetDateTime.now(), "키워드 삭제 성공");
     }
 
     @Override
