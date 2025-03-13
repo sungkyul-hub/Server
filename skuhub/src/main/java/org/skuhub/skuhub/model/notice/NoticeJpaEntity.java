@@ -4,11 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.skuhub.skuhub.model.user.UserInfoJpaEntity;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -73,6 +71,6 @@ public class NoticeJpaEntity {
     private Instant updatedAt;
 
     @OneToMany(mappedBy = "notice")
-    private Set<NotificationHistory> notificationHistories = new LinkedHashSet<>();
+    private Set<NotificationHistoryJpaEntity> notificationHistories = new LinkedHashSet<>();
 
 }

@@ -9,11 +9,13 @@ import org.skuhub.skuhub.common.response.BaseResponse;
 import org.skuhub.skuhub.exceptions.CustomException;
 import org.skuhub.skuhub.external.firebase.fcm.utils.FirebaseUtil;
 import org.skuhub.skuhub.model.notice.NoticeJpaEntity;
+import org.skuhub.skuhub.model.notice.NotificationHistoryJpaEntity;
 import org.skuhub.skuhub.model.taxi.TaxiJoinJpaEntity;
 import org.skuhub.skuhub.model.taxi.TaxiShareJpaEntity;
 import org.skuhub.skuhub.model.user.KeywordInfoJpaEntity;
 import org.skuhub.skuhub.model.user.UserInfoJpaEntity;
 import org.skuhub.skuhub.repository.notice.NoticeRepository;
+import org.skuhub.skuhub.repository.notice.NotificationHistoryRepository;
 import org.skuhub.skuhub.repository.taxi.TaxiJoinRepository;
 import org.skuhub.skuhub.repository.taxi.TaxiShareRepository;
 import org.skuhub.skuhub.repository.users.KeywordInfoRepository;
@@ -39,14 +41,16 @@ public class PushServiceImpl implements PushService {
     private final TaxiJoinRepository taxiJoinRepository;
     private final NoticeRepository noticeRepository;
     private final KeywordInfoRepository keywordInfoRepository;
+    private final NotificationHistoryRepository notificationHistoryRepository;
 
-    public PushServiceImpl(FirebaseUtil firebaseUtil, UserInfoRepository userInfoRepository, TaxiShareRepository taxiShareRepository, TaxiJoinRepository taxiJoinRepository, NoticeRepository noticeRepository, KeywordInfoRepository keywordInfoRepository) {
+    public PushServiceImpl(FirebaseUtil firebaseUtil, UserInfoRepository userInfoRepository, TaxiShareRepository taxiShareRepository, TaxiJoinRepository taxiJoinRepository, NoticeRepository noticeRepository, KeywordInfoRepository keywordInfoRepository, NotificationHistoryRepository notificationHistoryRepository) {
         this.firebaseUtil = firebaseUtil;
         this.userInfoRepository = userInfoRepository;
         this.taxiShareRepository = taxiShareRepository;
         this.taxiJoinRepository = taxiJoinRepository;
         this.noticeRepository = noticeRepository;
         this.keywordInfoRepository = keywordInfoRepository;
+        this.notificationHistoryRepository = notificationHistoryRepository;
     }
 
     @Override
@@ -98,12 +102,18 @@ public class PushServiceImpl implements PushService {
     public boolean pushKeywordAlarm(Long noticeId, String notice) throws IOException {    // 키워드 알림 전송
         log.info("pushKeywordAlarm: notice: {}", notice);
         List<KeywordInfoJpaEntity> noticeList = keywordInfoRepository.findByKeyword(notice);
-
+        NoticeJpaEntity noticeEntity = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "공지사항을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
             for (KeywordInfoJpaEntity keyword : noticeList) {
                 Long userKey = keyword.getUserKey().getUserKey();
                 UserInfoJpaEntity userEntity = userInfoRepository.findByUserKey(userKey)
                         .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "사용자를 찾을 수 없습니다. userKey: " + userKey, HttpStatus.NOT_FOUND));
+                NotificationHistoryJpaEntity notificationHistory = new NotificationHistoryJpaEntity();
+                notificationHistory.setUserKey(userEntity);
+                notificationHistory.setNotice(noticeEntity);
+                notificationHistory.setCreatedAt(LocalDateTime.now());
+                notificationHistoryRepository.save(notificationHistory);
 
                 PushRequest.SendPushRequest sendPushRequest = PushRequest.SendPushRequest.builder()
                         .userKey(userKey)

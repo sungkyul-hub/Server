@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.skuhub.skuhub.model.notice.NotificationHistoryJpaEntity;
 import org.skuhub.skuhub.model.taxi.TaxiCommentJpaEntity;
 import org.skuhub.skuhub.model.taxi.TaxiJoinJpaEntity;
 import org.skuhub.skuhub.model.taxi.TaxiShareJpaEntity;
@@ -77,6 +78,13 @@ public class UserInfoJpaEntity {
 
         @OneToOne(mappedBy = "userKey")
         private KeywordInfoJpaEntity keywordInfoTb;
+
+        @OneToMany(mappedBy = "userKey")
+        private Set<NotificationHistoryJpaEntity> notificationHistories = new LinkedHashSet<>();
+
+        public void setNotificationHistories(Set<NotificationHistoryJpaEntity> notificationHistories) {
+                this.notificationHistories = notificationHistories;
+        }
 
         public void setKeywordInfoTb(KeywordInfoJpaEntity keywordInfoTb) {
                 this.keywordInfoTb = keywordInfoTb;
