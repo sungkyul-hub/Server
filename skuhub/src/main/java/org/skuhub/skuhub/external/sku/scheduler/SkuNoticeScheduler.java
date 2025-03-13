@@ -12,6 +12,7 @@ public class SkuNoticeScheduler {
 
     @Scheduled(cron = "0 0 * * * *")
     public void scheduleCrawling() {
-        crawler.crawlAndSaveNotice();
+        String url= null;
+        crawler.crawlAndSaveNotice(url);
     }
 }

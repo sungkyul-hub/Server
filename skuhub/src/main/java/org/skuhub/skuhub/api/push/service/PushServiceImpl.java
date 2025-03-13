@@ -70,7 +70,21 @@ public class PushServiceImpl implements PushService {
     }
 
     @Override
-    public boolean pushKeywordAlarm(Long postId, String notice) throws IOException {    // 키워드 알림 전송
+    public BaseResponse<String> saveKeyword(String userId, String Keyword) {
+        UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+        return null;
+    }
+
+    @Override
+    public BaseResponse<String> deleteKeyword(String userId, String Keyword) {
+        UserInfoJpaEntity userEntity = userInfoRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NotFound, "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+        return null;
+    }
+
+    @Override
+    public boolean pushKeywordAlarm(Long noticeId, String notice) throws IOException {    // 키워드 알림 전송
         log.info("pushKeywordAlarm: notice: {}", notice);
         List<KeywordInfoJpaEntity> noticeList = keywordInfoRepository.findByKeyword(notice);
 
@@ -85,7 +99,7 @@ public class PushServiceImpl implements PushService {
                         .title("키워드 알림")
                         .content(notice)
                         .pushType(PushType.NOTICE)
-                        .moveToId("NOTICE" + postId)
+                        .moveToId("NOTICE" + noticeId)
                         .build();
 
                 try {
@@ -160,6 +174,7 @@ public class PushServiceImpl implements PushService {
                 .moveToId("TAXI" + postId)
                 .build();
         sendRetry(sendPushRequest, userEntity.getAccessToken(), userEntity);
+
         return true;
     }
 

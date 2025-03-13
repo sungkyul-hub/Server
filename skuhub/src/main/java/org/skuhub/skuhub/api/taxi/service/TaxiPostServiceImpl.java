@@ -72,10 +72,10 @@ public class TaxiPostServiceImpl implements TaxiPostService {
         return new BaseResponse<>(true, "201", "택시합승 게시글 저장 성공", OffsetDateTime.now(), "게시글 작성 성공");
     } catch (Exception e) {
         return new BaseResponse<>(false, "500", "게시글 저장 실패", OffsetDateTime.now(), e.getMessage());
+        }
     }
-}
 
-    @Operation(summary = "게시글 조회", description = "택시합승 게시글들을 조회하는 API")
+    //택시합승 게시글들을 조회하는 API
     public BaseResponse<List<TaxiPostResponse>> getTaxiShare(Long cursor, int limit) {
         List<TaxiShareJpaEntity> lastPostId = taxiShareRepository.findLastPostId();
         long cursorValue = cursor != null ? cursor : lastPostId.getFirst().getPostId() + 1;

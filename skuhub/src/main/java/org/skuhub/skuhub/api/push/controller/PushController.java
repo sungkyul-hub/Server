@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.skuhub.skuhub.api.push.dto.KeywordRequest;
 import org.skuhub.skuhub.api.push.dto.TokenSaveRequest;
 import org.skuhub.skuhub.api.push.service.PushServiceImpl;
 import org.skuhub.skuhub.common.response.BaseResponse;
@@ -37,6 +38,24 @@ public class PushController {
     public BaseResponse<String> deleteToken(HttpServletRequest request) {
         String userId = jwtUtil.getUserId(request);
         return pushService.deleteToken(userId);
+    }
+
+    @Operation(summary = "키워드 등록", description = "키워드 등록하는 API")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/keyword")
+    public BaseResponse<String> saveKeyword(HttpServletRequest request,
+                                            @RequestBody KeywordRequest keyword) {
+        String userId = jwtUtil.getUserId(request);
+        return pushService.saveKeyword(userId, keyword.getKeyword());
+    }
+
+    @Operation(summary = "키워드 삭제", description = "키워드 삭제하는 API")
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/keyword")
+    public BaseResponse<String> deleteKeyword(HttpServletRequest request,
+                                              @RequestBody KeywordRequest keyword) {
+        String userId = jwtUtil.getUserId(request);
+        return pushService.deleteKeyword(userId, keyword.getKeyword());
     }
 
 //    @Operation(summary = "키워드 알림 전송", description = "키워드 알림 전송하는 API")

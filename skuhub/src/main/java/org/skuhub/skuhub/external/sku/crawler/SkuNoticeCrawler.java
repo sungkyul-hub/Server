@@ -17,9 +17,7 @@ import java.time.format.DateTimeFormatter;
 public class SkuNoticeCrawler {
     private  final NoticeServiceImpl noticeService;
 
-    public void crawlAndSaveNotice() {
-        String url = "https://www.sungkyul.ac.kr/skukr/343/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGc2t1a3IlMkY5NiUyRjM3Njk3JTJGYXJ0Y2xWaWV3LmRvJTNGaXNWaWV3TWluZSUzRGZhbHNlJTI2YmJzQ2xTZXElM0QlMjZzcmNoV3JkJTNEJTI2cmdzQmduZGVTdHIlM0QlMjZwYWdlJTNEMSUyNmJic09wZW5XcmRTZXElM0QlMjZyZ3NFbmRkZVN0ciUzRCUyNnNyY2hDb2x1bW4lM0QlMjZwYXNzd29yZCUzRCUyNg%3D%3D";
-
+    public void crawlAndSaveNotice(String url) {
         try {
             Document doc = Jsoup.connect(url).get();
 
