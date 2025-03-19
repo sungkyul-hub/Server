@@ -2,7 +2,6 @@ package org.skuhub.skuhub.model.timetable;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.skuhub.skuhub.model.BaseTime;
 
 @Entity
 @Table(name = "PERSONAL_TIMETABLE_TB")
