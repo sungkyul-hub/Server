@@ -47,4 +47,13 @@ public class BaseResponse<T> {
         this.message = message;
         this.data = data;
     }
+
+    public BaseResponse(int statusCode, String message, T data, boolean success) {
+        this();
+        this.isSuccess = success;  // success 값 사용
+        this.code = String.valueOf(statusCode);
+        this.message = message;
+        this.data = data;
+    }
 }
+
