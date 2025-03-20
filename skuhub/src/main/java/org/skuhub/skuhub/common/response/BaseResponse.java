@@ -31,14 +31,29 @@ public class BaseResponse<T> {
     @Schema(description = "응답 데이터")
     private T data;
 
-    // 기본 생성자에서 응답 시간을 현재 시간으로 초기화
     public BaseResponse() {
         this.responseAt = OffsetDateTime.now();
     }
 
-    // 생성자에서 데이터만 받아서 BaseResponse를 생성하는 방식
     public BaseResponse(T data) {
         this();
         this.data = data;
     }
+
+    public BaseResponse(int statusCode, String message, T data) {
+        this();
+        this.isSuccess = statusCode == 200;  // 응답 코드가 200이면 성공으로 처리
+        this.code = String.valueOf(statusCode);
+        this.message = message;
+        this.data = data;
+    }
+
+    public BaseResponse(int statusCode, String message, T data, boolean success) {
+        this();
+        this.isSuccess = success;  // success 값 사용
+        this.code = String.valueOf(statusCode);
+        this.message = message;
+        this.data = data;
+    }
 }
+

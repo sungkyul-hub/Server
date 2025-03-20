@@ -22,7 +22,7 @@ public class SampleJpaEntity extends BaseTime {
     @Column(name = "email", nullable = false, length = 100)
     private String email;  // 'email' 컬럼에 맞춤
 
-    @Column(name = "password", nullable = false, length = 20)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;  // 'password' 컬럼에 맞춤
 
     @Column(name = "year", nullable = false)
