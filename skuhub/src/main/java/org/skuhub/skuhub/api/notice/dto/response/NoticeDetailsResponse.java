@@ -20,6 +20,5 @@ public class NoticeDetailsResponse {
     private String url;
 
     public NoticeDetailsResponse() {
-
     }
 }
