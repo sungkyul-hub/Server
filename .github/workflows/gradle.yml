@@ -27,7 +27,7 @@ jobs:
         gradle-version: '8.12.1'
 
     - name: Build with Gradle Wrapper
-      run: ./Server/skuhub/gradlew build  # 경로를 수정했습니다.
+      run: ./server/gradlew build  # 경로를 수정했습니다.
 
   dependency-submission:
 
