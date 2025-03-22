@@ -10,7 +10,6 @@ import java.time.Instant;
 @NoArgsConstructor
 @Builder
 public class CompletionResponse {
-    private Integer userKey;  // Integer 타입으로 저장
+    private Long userKey;
     private Instant updatedAt;
 }
-

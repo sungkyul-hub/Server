@@ -238,7 +238,7 @@ public class TimetableController {
             );
         }
         String userIdStr = jwtUtil.getUserId(request);
-        Integer userKey = Integer.valueOf(userIdStr);
+        Long userKey = Long.valueOf(userIdStr);
         req.setUserKey(userKey);
         CompletionEntity savedData = timetableService.saveCompletionData(req);
         Map<String, Object> result = new HashMap<>();
@@ -253,7 +253,7 @@ public class TimetableController {
     public ResponseEntity<BaseResponse<CompletionResponse>> editCompletion(HttpServletRequest request,
                                                                            @RequestBody CompletionRequest req) {
         String userIdStr = jwtUtil.getUserId(request);
-        Integer userKey = Integer.valueOf(userIdStr);
+        Long userKey = Long.valueOf(userIdStr);
         req.setUserKey(userKey);
         CompletionEntity completion = timetableService.updateCompletionData(req);
         CompletionResponse response = new CompletionResponse(
