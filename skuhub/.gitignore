@@ -39,3 +39,6 @@ out/
 ### VS Code ###
 .vscode/
 *.env
+
+### MAC OS ###
+.DS_Store
