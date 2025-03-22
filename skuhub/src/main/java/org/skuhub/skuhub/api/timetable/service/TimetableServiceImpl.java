@@ -14,11 +14,11 @@ import org.skuhub.skuhub.model.timetable.TimetableScheduleEntity;
 import org.skuhub.skuhub.model.timetable.UserTimetableEntity;
 import org.skuhub.skuhub.model.timetable.CompletionEntity;
 import org.skuhub.skuhub.model.timetable.PersonalTimetableEntity;
-import org.skuhub.skuhub.model.timetable.UserInfoTb;
+import org.skuhub.skuhub.model.user.UserInfoJpaEntity;
 import org.skuhub.skuhub.repository.timetable.TimetableScheduleRepository;
 import org.skuhub.skuhub.repository.timetable.UserTimetableRepository;
 import org.skuhub.skuhub.repository.timetable.CompletionRepository;
-import org.skuhub.skuhub.repository.timetable.UserInfoRepository;
+import org.skuhub.skuhub.repository.users.UserInfoRepository;
 import org.skuhub.skuhub.repository.timetable.PersonalTimetableRepository;
 import org.springframework.stereotype.Service;
 
@@ -151,12 +151,18 @@ public class TimetableServiceImpl implements TimetableService {
     @Override
     @Transactional
     public CompletionEntity saveCompletionData(CompletionRequest request) {
-        Optional<UserInfoTb> userOptional = userInfoRepository.findById(request.getUserKey());
+        // userKey 타입을 Long 으로 변환
+        Long userKey = request.getUserKey().longValue();
+
+        Optional<UserInfoJpaEntity> userOptional = userInfoRepository.findById(userKey);
         if (userOptional.isEmpty()) {
             throw new IllegalArgumentException("유효하지 않은 user_key입니다.");
         }
-        UserInfoTb user = userOptional.get();
-        Optional<CompletionEntity> existingCompletion = completionRepository.findByUserInfoTb_UserKey(request.getUserKey());
+        UserInfoJpaEntity user = userOptional.get();
+
+        // 이미 존재하는 completion 데이터 확인
+        Optional<CompletionEntity> existingCompletion = completionRepository.findByUserInfoTb_UserKey(userKey);
+
         CompletionEntity completion;
         if (existingCompletion.isPresent()) {
             completion = existingCompletion.get();
@@ -164,6 +170,8 @@ public class TimetableServiceImpl implements TimetableService {
             completion = new CompletionEntity();
             completion.setUserInfoTb(user);
         }
+
+        // 데이터 설정
         completion.setMajorRequired(request.getMajorRequired());
         completion.setMajorElective(request.getMajorElective());
         completion.setGeneralRequired(request.getGeneralRequired());
@@ -177,13 +185,14 @@ public class TimetableServiceImpl implements TimetableService {
         completion.setGraduationCredits(request.getGraduationCredits());
         completion.setAvgScore(request.getAvgScore());
         completion.setUpdatedAt(java.time.OffsetDateTime.now());
+
         return completionRepository.save(completion);
     }
 
     @Override
     @Transactional
     public CompletionEntity updateCompletionData(CompletionRequest request) {
-        Optional<CompletionEntity> existingCompletion = completionRepository.findByUserInfoTb_UserKey(request.getUserKey());
+        Optional<CompletionEntity> existingCompletion = completionRepository.findByUserInfoTb_UserKey(request.getUserKey().longValue());
         if (existingCompletion.isEmpty()) {
             throw new IllegalArgumentException("해당 user_key에 대한 이수구분 정보를 찾을 수 없습니다.");
         }

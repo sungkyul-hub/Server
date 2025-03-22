@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Server.iml" filepath="$PROJECT_DIR$/.idea/Server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/skuhub.iml" filepath="$PROJECT_DIR$/.idea/modules/skuhub.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/skuhub.aot.iml" filepath="$PROJECT_DIR$/.idea/modules/skuhub.aot.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/skuhub.aotTest.iml" filepath="$PROJECT_DIR$/.idea/modules/skuhub.aotTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/skuhub.main.iml" filepath="$PROJECT_DIR$/.idea/modules/skuhub.main.iml" />

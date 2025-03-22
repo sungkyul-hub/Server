@@ -12,5 +12,12 @@
         <module name="skuhub.main" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="skuhub" target="23" />
+      <module name="skuhub.aot" target="23" />
+      <module name="skuhub.aotTest" target="23" />
+      <module name="skuhub.main" target="23" />
+      <module name="skuhub.test" target="23" />
+    </bytecodeTargetLevel>
   </component>
 </project>
