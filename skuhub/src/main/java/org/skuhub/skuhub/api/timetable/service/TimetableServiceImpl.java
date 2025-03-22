@@ -41,6 +41,7 @@ public class TimetableServiceImpl implements TimetableService {
         this.completionRepository = completionRepository;
         this.userInfoRepository = userInfoRepository;
         this.personalTimetableRepository = personalTimetableRepository;
+
     }
 
     @Override
