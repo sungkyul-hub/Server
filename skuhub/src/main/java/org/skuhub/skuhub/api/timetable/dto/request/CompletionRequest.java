@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Setter
 public class CompletionRequest {
     @JsonProperty("user_key")
-    private Integer userKey;
+    private Long userKey;
 
     @JsonProperty("major_required")
     private Integer majorRequired;

@@ -1,9 +1,9 @@
 package org.skuhub.skuhub.model.timetable;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.skuhub.skuhub.model.BaseTime;
+import org.skuhub.skuhub.model.user.UserInfoJpaEntity;
 
 import java.math.BigDecimal;
 
@@ -19,12 +19,12 @@ public class CompletionEntity extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_key", nullable = false)
-    private Integer id;
+    private Long id;
 
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_key", referencedColumnName = "user_key", nullable = false)
-    private UserInfoTb userInfoTb;
+    private UserInfoJpaEntity userInfoTb;
 
     @Column(name = "major_required")
     private Integer majorRequired;
